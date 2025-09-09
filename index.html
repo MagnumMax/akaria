@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AKARIA Portal - Интерактивный прототип v5</title>
+
+    <!-- Tailwind CSS via CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Chart.js via CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        /* Vercel/Geist Inspired Base Styling */
+        :root {
+            --background: #ffffff;
+            --foreground: #000000;
+            --muted: #f9fafb;
+            --muted-foreground: #6b7280;
+            --border: #e5e7eb;
+            --accent: #0070f3;
+            --accent-foreground: #ffffff;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--background);
+            color: var(--foreground);
+            -webkit-font-smoothing: antialiased;
+        }
+        /* Custom UI classes */
+        .nav-active { background-color: var(--muted); color: var(--foreground); font-weight: 600; }
+        .page-hidden { display: none; }
+        .tab-active { border-bottom-color: var(--foreground); color: var(--foreground); font-weight: 600; }
+        /* Modal State Control */
+        [data-state="closed"] { display: none; }
+        [data-state="open"] { display: flex; }
+        /* Collapsible Section */
+        .collapsible-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+        }
+        details[open] .collapsible-content {
+            max-height: 1000px;
+        }
+        details summary::-webkit-details-marker { display: none; }
+        details summary { list-style: none; }
+    </style>
+</head>
+<body class="bg-white">
+
+    <div id="app-container" class="flex h-screen">
+        
+        <!-- Sidebar Navigation -->
+        <nav id="sidebar" class="hidden md:flex flex-col w-64 flex-shrink-0 border-r border-border bg-muted/40 transition-transform duration-300">
+            <div class="flex items-center h-16 px-6 border-b border-border">
+                <a href="#dashboard" class="flex items-center gap-2 font-semibold text-lg">
+                    <svg class="h-6 w-6 text-accent" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3L2 9l10 6 10-6-10-6z"/><path d="M2 9l10 6 10-6"/><path d="M2 15l10 6 10-6"/></svg>
+                    <span>AKARIA Portal</span>
+                </a>
+            </div>
+            <div id="sidebar-nav-links" class="flex-1 overflow-y-auto py-4"></div>
+        </nav>
+
+        <!-- Main Content Area -->
+        <div class="flex flex-col flex-1">
+            <header class="flex items-center h-16 px-4 md:px-6 border-b border-border bg-white sticky top-0 z-20">
+                <button id="mobile-menu-btn" class="md:hidden mr-4 p-2 rounded-md hover:bg-muted"><svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg></button>
+                <div class="flex-1"><h1 id="page-title" class="text-xl font-semibold">Dashboard</h1></div>
+                <div class="flex items-center gap-4">
+                    <div class="relative"><button id="user-menu-btn" class="flex items-center gap-2"><img src="https://i.pravatar.cc/150?u=ceo" id="user-avatar" class="h-8 w-8 rounded-full" alt="User Avatar"><div class="hidden md:block text-left"><p id="user-name" class="text-sm font-medium">Elena Petrova</p><p id="user-role-display" class="text-xs text-muted-foreground">CEO</p></div></button></div>
+                </div>
+            </header>
+
+            <main id="main-content" class="flex-1 overflow-y-auto bg-muted/40">
+                <div id="page-content-wrapper" class="p-4 md:p-6">
+                    <section id="page-dashboard" class="page-hidden"></section>
+                    <section id="page-jessica" class="page-hidden"></section>
+                    <section id="page-leonardo" class="page-hidden"></section>
+                    <section id="page-jessica-settings" class="page-hidden"></section>
+                    <section id="page-deals" class="page-hidden"></section>
+                    <section id="page-deal-details" class="page-hidden"></section>
+                    <section id="page-properties" class="page-hidden"></section>
+                    <section id="page-property-details" class="page-hidden"></section>
+                    <section id="page-tasks" class="page-hidden"></section>
+                    <section id="page-analytics" class="page-hidden"></section>
+                    <section id="page-settings" class="page-hidden"></section>
+                    <section id="page-imports" class="page-hidden"></section>
+                </div>
+            </main>
+        </div>
+    </div>
+    
+    <!-- Floating Role Switcher -->
+    <div id="role-switcher" class="fixed bottom-4 right-4 bg-white border border-border shadow-lg rounded-lg p-2 flex flex-col gap-2 z-50">
+        <button data-role="CEO" class="role-btn p-2 rounded-md hover:bg-muted text-xs font-medium">CEO</button>
+        <button data-role="Agent" class="role-btn p-2 rounded-md hover:bg-muted text-xs font-medium">Agent</button>
+        <button data-role="Admin" class="role-btn p-2 rounded-md hover:bg-muted text-xs font-medium">Admin</button>
+    </div>
+    
+    <!-- Mini-Landing Page Offer (Separate view) -->
+    <div id="page-offer" class="page-hidden fixed inset-0 bg-white z-[100] overflow-y-auto"></div>
+    
+    <!-- Modal Container -->
+    <div id="modal-container" data-state="closed" class="fixed inset-0 bg-black/60 z-[100] items-center justify-center p-4">
+        <div id="modal-content" class="bg-white rounded-lg shadow-xl w-full max-w-2xl max-h-[90vh] flex flex-col">
+            <div class="flex justify-between items-center p-4 border-b"><h3 id="modal-title" class="font-semibold">Modal Title</h3><button id="modal-close-btn" class="p-1 rounded-full hover:bg-muted">&times;</button></div>
+            <div id="modal-body" class="p-6 overflow-y-auto"></div>
+        </div>
+    </div>
+
+
+<script>
+// ===================================================================================
+// SCRIPT: AKARIA Portal Interactive Prototype
+// ===================================================================================
+
+document.addEventListener('DOMContentLoaded', () => {
+
+    // -----------------------------------------------------------------------------
+    // 1. MOCK DATA & STATE MANAGEMENT
+    // -----------------------------------------------------------------------------
+
+    let state = { currentUserRole: 'CEO', currentPage: 'dashboard', unassignedLeads: 5 };
+
+    const users = {
+        CEO: { name: 'Elena Petrova', role: 'CEO', avatar: 'https://i.pravatar.cc/150?u=ceo' },
+        Agent: { name: 'Alex Ivanov', role: 'Agent', avatar: 'https://i.pravatar.cc/150?u=agent' },
+        Admin: { name: 'Maria Sidorova', role: 'Admin', avatar: 'https://i.pravatar.cc/150?u=admin' }
+    };
+    
+    const ICONS = {
+        dashboard: `<svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3L2 9l10 6 10-6-10-6z"/><path d="M2 9l10 6 10-6"/><path d="M2 15l10 6 10-6"/></svg>`,
+        assistant: `<svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 8V4H8"/><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M2 14h2m16 0h2M15 2v2M9 2v2"/></svg>`,
+        deals: `<svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><line x1="3" y1="9" x2="21" y2="9"/></svg>`,
+        properties: `<svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 21h12v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2z"/><path d="M14 10a4 4 0 0 1 4-4h2a2 2 0 0 1 2 2v2a4 4 0 0 1-4 4h-2a2 2 0 0 1-2-2v-2zM8 9V7a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2"/><line x1="12" y1="13" x2="12" y2="15"/></svg>`,
+        tasks: `<svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/><path d="m9 14 2 2 4-4"/></svg>`,
+        analytics: `<svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="M18 17V9"/><path d="M13 17V5"/><path d="M8 17v-3"/></svg>`,
+        settings: `<svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>`,
+        imports: `<svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>`,
+        bot: `<span class="text-lg">✨</span>`,
+        anomaly: `<svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z" /></svg>`,
+        chevron: `<svg class="h-4 w-4 transition-transform" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" /></svg>`
+    };
+    
+    const dealsData = [ { id: 1, title: 'Villa in Palm Jumeirah', client: 'John Doe', agent: 'Alex Ivanov', amount: 5_200_000, status: 'New Lead', summary: 'Client John Doe, budget around $5.2M...', feedback: { liked: 'Sea view', disliked: 'Wants a modern kitchen', rating: 4, nextStep: 'Find properties with renovated kitchens.' } }, { id: 2, title: 'Apartment in Dubai Marina', client: 'Jane Smith', agent: 'Alex Ivanov', amount: 2_300_000, status: 'Qualified', summary: 'Client Jane Smith, budget $2.3M...', feedback: null }, { id: 3, title: 'Penthouse in Downtown', client: 'Sam Wilson', agent: 'Anna Petrova', amount: 12_500_000, status: 'Qualified', summary: 'High-value client Sam Wilson...', feedback: null }, { id: 4, title: 'Office in Business Bay', client: 'Peter Jones', agent: 'Alex Ivanov', amount: 3_100_000, status: 'Offer Sent', summary: 'Corporate client Peter Jones...', feedback: null, offerUrl: '#offer/4' }, { id: 5, title: 'Townhouse in Arabian Ranches', client: 'Mary Johnson', agent: 'Anna Petrova', amount: 4_500_000, status: 'Negotiation', summary: 'Family client Mary Johnson...', feedback: { liked: 'Community feel', disliked: 'Far from school', rating: 5, nextStep: 'Provide details on nearby schools.' }, offerUrl: '#offer/5' }];
+    const tasksData = [ { id: 1, title: 'Follow up with John Doe', due: '2024-09-10', status: 'Today', completed: false, agent: 'Alex Ivanov', createdBy: 'Jessica'}, { id: 2, title: 'Prepare offer for Jane Smith', due: '2024-09-11', status: 'Upcoming', completed: false, agent: 'Alex Ivanov' }, { id: 3, title: 'Schedule viewing for Sam Wilson', due: '2024-09-08', status: 'Overdue', completed: false, agent: 'Anna Petrova' }, { id: 4, title: 'Get feedback from Peter Jones', due: '2024-09-10', status: 'Today', completed: true, agent: 'Alex Ivanov', createdBy: 'Jessica' }, { id: 5, title: 'Send documents to Mary Johnson', due: '2024-09-12', status: 'Upcoming', completed: false, agent: 'Anna Petrova' }];
+    const propertiesData = [ { id: 1, name: 'Luxury Villa with Sea View', location: 'Palm Jumeirah', price: 5_200_000, beds: 5, baths: 6, area: 6500, agent: 'Alex Ivanov', image: 'https://picsum.photos/seed/p1/800/600' }, { id: 2, name: 'Modern Apartment, Marina View', location: 'Dubai Marina', price: 2_300_000, beds: 2, baths: 3, area: 1500, agent: 'Alex Ivanov', image: 'https://picsum.photos/seed/p2/800/600' }, { id: 3, name: 'Exclusive Downtown Penthouse', location: 'Downtown Dubai', price: 12_500_000, beds: 4, baths: 5, area: 4500, agent: 'Anna Petrova', image: 'https://picsum.photos/seed/p3/800/600' }];
+    const assistantDialogs = [ { id: 1, client: 'Mark Zuckerberg', lastMessage: 'Thanks, Jessica! Looks interesting...', status: 'Waiting for Client' }, { id: 2, client: 'Elon Musk', lastMessage: 'Planning to send: "Based on your interest..."', status: 'Approval Needed' }, { id: 3, client: 'Jeff Bezos', lastMessage: 'Great! I will now prepare a summary for my colleague...', status: 'Ready for Handoff' }];
+    const ceoAnomaly = { agent: 'Anna Petrova', metric: 'Lead Qualification Rate', value: '15% below team average', suggestion: 'Review AI prompt settings.'};
+    const teamPulseData = [ { agent: 'Alex Ivanov', dialogs: 12, responseTime: '32s', conversion: '68%' }, { agent: 'Anna Petrova', dialogs: 8, responseTime: '45s', conversion: '53%' }, { agent: 'David Williams', dialogs: 15, responseTime: '28s', conversion: '71%' }];
+    const importedLeads = [ { name: 'Vitalik Buterin', phone: '+971 50 123 4567', status: 'Unassigned' }, { name: 'Pavel Durov', phone: '+971 50 234 5678', status: 'Unassigned' }, { name: 'Gavin Wood', phone: '+971 50 345 6789', status: 'Unassigned' }, { name: 'Charles Hoskinson', phone: '+971 50 456 7890', status: 'Unassigned' }, { name: 'Satoshi Nakamoto', phone: '+971 50 567 8901', status: 'Unassigned' }];
+    const inactiveUsers = [{ name: 'Old Agent', lastSeen: '45 days ago' }];
+    const systemErrors = [{ code: 'API-502', message: 'Failed to connect to WhatsApp Gateway', time: '2 hours ago' }];
+    const assistantStats = [ { assistant: 'Jessica', owner: 'Alex Ivanov', dialogs: 152, conversion: '68%' }, { assistant: 'Sarah', owner: 'Anna Petrova', dialogs: 121, conversion: '53%' }, { assistant: 'David', owner: 'David Williams', dialogs: 189, conversion: '71%' }];
+
+    // -----------------------------------------------------------------------------
+    // 2. NAVIGATION & ROUTING
+    // -----------------------------------------------------------------------------
+    
+    const navLinks = {
+        CEO: [ { id: 'dashboard', name: 'Dashboard', icon: ICONS.dashboard }, { id: 'deals', name: 'Deals', icon: ICONS.deals }, { id: 'properties', name: 'Properties', icon: ICONS.properties }, { id: 'tasks', name: 'Tasks', icon: ICONS.tasks }, { id: 'analytics', name: 'Analytics', icon: ICONS.analytics }, { id: 'settings', name: 'Settings', icon: ICONS.settings }, { type: 'divider' }, { id: 'leonardo', name: 'My Leonardo', icon: ICONS.assistant }],
+        Agent: [ { id: 'dashboard', name: 'Dashboard', icon: ICONS.dashboard }, { id: 'tasks', name: 'My Tasks', icon: ICONS.tasks }, { id: 'deals', name: 'My Deals', icon: ICONS.deals }, { id: 'properties', name: 'Properties', icon: ICONS.properties }, { type: 'divider' }, { id: 'jessica', name: 'My Jessica', icon: ICONS.assistant }],
+        Admin: [ { id: 'dashboard', name: 'Dashboard', icon: ICONS.dashboard }, { id: 'imports', name: 'Imports', icon: ICONS.imports }, { id: 'properties', name: 'Manage Properties', icon: ICONS.properties }, { id: 'settings', name: 'Settings', icon: ICONS.settings }]
+    };
+
+    function renderSidebar() {
+        const links = navLinks[state.currentUserRole];
+        const navContainer = document.getElementById('sidebar-nav-links');
+        navContainer.innerHTML = `<nav class="grid items-start px-4 text-sm font-medium">${links.map(link => { if (link.type === 'divider') return '<hr class="my-2 border-border">'; const isAssistantLink = link.id === 'jessica' || link.id === 'leonardo'; const linkClasses = `nav-link flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-foreground ${isAssistantLink ? 'text-accent font-semibold' : ''}`; return `<a href="#${link.id}" data-page="${link.id}" class="${linkClasses}">${link.icon}<span>${link.name}</span></a>`; }).join('')}</nav>`;
+        updateActiveNavLink();
+    }
+
+    function updateActiveNavLink() {
+        document.querySelectorAll('.nav-link').forEach(link => {
+            link.classList.remove('nav-active');
+            if (link.dataset.page === state.currentPage.split('-')[0]) {
+                link.classList.add('nav-active');
+            }
+        });
+    }
+
+    function showPage(pageId, contextId = null) {
+        document.querySelectorAll('#page-content-wrapper > section').forEach(page => page.classList.add('page-hidden'));
+        
+        const targetPage = document.getElementById(`page-${pageId}`);
+        if (targetPage) {
+            targetPage.classList.remove('page-hidden');
+            state.currentPage = pageId;
+            
+            const renderMap = { 'dashboard': renderDashboard, 'jessica': renderJessicaPage, 'leonardo': renderLeonardoPage, 'jessica-settings': renderJessicaSettingsPage, 'deals': renderDealsPage, 'deal-details': () => renderDealDetailsPage(contextId), 'properties': renderPropertiesPage, 'property-details': () => renderPropertyDetailsPage(contextId), 'tasks': renderTasksPage, 'analytics': renderAnalyticsPage, 'settings': renderSettingsPage, 'imports': renderImportsPage };
+            if (renderMap[pageId]) renderMap[pageId]();
+
+            const pageConfig = (navLinks[state.currentUserRole] || []).find(p => p.id === pageId);
+            document.getElementById('page-title').textContent = pageConfig ? pageConfig.name : pageId.replace('-', ' ').replace(/\b\w/g, l => l.toUpperCase());
+
+            updateActiveNavLink();
+        } else {
+            showPage('dashboard');
+        }
+        document.getElementById('sidebar').classList.add('hidden');
+    }
+
+    function handleRouting() {
+        let hash = window.location.hash.substring(1);
+        if (hash.startsWith('offer/')) {
+            const token = hash.split('/')[1];
+            renderOfferPage(token);
+            document.getElementById('page-offer').classList.remove('page-hidden');
+            document.getElementById('app-container').classList.add('page-hidden');
+            document.getElementById('role-switcher').classList.add('page-hidden');
+            return;
+        } else {
+            document.getElementById('page-offer').classList.add('page-hidden');
+            document.getElementById('app-container').classList.remove('page-hidden');
+            document.getElementById('role-switcher').classList.remove('page-hidden');
+        }
+        const [pageId, contextId] = hash.split('/');
+        showPage(pageId || 'dashboard', contextId ? parseInt(contextId) : null);
+    }
+
+    // -----------------------------------------------------------------------------
+    // 3. PAGE RENDERING FUNCTIONS
+    // -----------------------------------------------------------------------------
+
+    function renderDashboard() {
+        const page = document.getElementById('page-dashboard');
+        const role = state.currentUserRole;
+        if (role === 'CEO') renderCeoDashboard(page);
+        else if (role === 'Agent') renderAgentDashboard(page);
+        else if (role === 'Admin') renderAdminDashboard(page);
+    }
+    
+    function renderAdminDashboard(page) {
+        page.innerHTML = `
+        <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+            <div class="bg-white border rounded-lg p-4"><h3 class="text-sm font-medium text-muted-foreground">System Status</h3><p class="text-2xl font-bold mt-4 text-green-600">All Systems Operational</p></div>
+            <div class="bg-white border rounded-lg p-4"><h3 class="text-sm font-medium text-muted-foreground">Active Users</h3><p class="text-2xl font-bold mt-4">${Object.keys(users).length}</p></div>
+            <div class="bg-white border rounded-lg p-4"><h3 class="text-sm font-medium text-muted-foreground">Inactive Users</h3><p class="text-2xl font-bold mt-4">${inactiveUsers.length}</p></div>
+            <div class="bg-white border rounded-lg p-4"><h3 class="text-sm font-medium text-muted-foreground">System Errors (24h)</h3><p class="text-2xl font-bold mt-4">${systemErrors.length}</p></div>
+        </div>
+        <div class="mt-6 bg-white border rounded-lg">
+            <div class="p-4 border-b"><h3 class="font-semibold">AI Assistant Overview</h3></div>
+            <div class="overflow-x-auto"><table class="w-full text-sm">
+                <thead><tr class="text-left text-muted-foreground"><th class="p-4">Assistant</th><th class="p-4">Owner</th><th class="p-4">Dialogs Today</th><th class="p-4">Conversion</th></tr></thead>
+                <tbody>${assistantStats.map(s => `<tr class="border-t"><td class="p-4 font-medium">${s.assistant}</td><td class="p-4">${s.owner}</td><td class="p-4">${s.dialogs}</td><td class="p-4">${s.conversion}</td></tr>`).join('')}</tbody>
+            </table></div>
+        </div>
+        <div class="mt-6 bg-white border rounded-lg">
+            <div class="p-4 border-b"><h3 class="font-semibold">Recent System Errors</h3></div>
+            <div class="overflow-x-auto"><table class="w-full text-sm">
+                <thead><tr class="text-left text-muted-foreground"><th class="p-4">Time</th><th class="p-4">Code</th><th class="p-4">Message</th></tr></thead>
+                <tbody>${systemErrors.map(e => `<tr class="border-t"><td class="p-4 text-red-600">${e.time}</td><td class="p-4 font-mono">${e.code}</td><td class="p-4">${e.message}</td></tr>`).join('')}</tbody>
+            </table></div>
+        </div>`;
+    }
+
+    function renderCeoDashboard(page) { const kpiData = [ { title: 'Total Revenue', value: '$12,450,000', change: '+15.2% from last month'}, { title: 'Active Deals', value: '32', change: '+5 from last week'}, { title: 'New Leads (Today)', value: '18', change: '+2 since yesterday' }, { title: 'Conversion Rate', value: '4.8%', change: '-0.2% from last month' }]; page.innerHTML = `<div class="grid gap-6 md:grid-cols-2 lg:grid-cols-4">${kpiData.map(kpi => `<div class="bg-white border rounded-lg p-4"><h3 class="text-sm font-medium text-muted-foreground">${kpi.title}</h3><p class="text-2xl font-bold mt-4">${kpi.value}</p><p class="text-xs text-muted-foreground">${kpi.change}</p></div>`).join('')}</div><div class="grid gap-6 mt-6 grid-cols-1 lg:grid-cols-3"><div class="lg:col-span-2 bg-white border rounded-lg p-4"><h3 class="font-semibold mb-4">Team Pulse</h3><table class="w-full text-sm"><thead><tr class="text-left text-muted-foreground"><th class="py-2">Agent</th><th>Active Dialogs</th><th>Avg. Response</th><th>Conversion</th></tr></thead><tbody>${teamPulseData.map(p => `<tr class="border-b"><td class="py-3 font-medium">${p.agent}</td><td>${p.dialogs}</td><td>${p.responseTime}</td><td>${p.conversion}</td></tr>`).join('')}</tbody></table></div><div class="bg-white border rounded-lg p-4 flex flex-col justify-center items-center text-center"><div class="bg-yellow-100 text-yellow-800 rounded-full p-3">${ICONS.anomaly}</div><h3 class="font-semibold mt-4">AI Anomaly Detected</h3><p class="text-sm text-muted-foreground mt-1">${ceoAnomaly.agent}'s ${ceoAnomaly.metric} is ${ceoAnomaly.value}. <a href="#" class="text-accent font-medium">Review</a></p></div></div><div class="mt-6 bg-white border rounded-lg p-4"><h3 class="font-semibold mb-4">Leads per Week</h3><div class="h-64"><canvas id="ceoLeadsChart"></canvas></div></div>`; renderCeoCharts(); }
+    function renderAgentDashboard(page) { page.innerHTML = `<div class="bg-white border rounded-lg p-6"><h3 class="font-semibold text-xl mb-4">My Focus Today</h3><div class="border-b"><nav class="-mb-px flex gap-6" id="focus-tabs"><button data-tab="hot-leads" class="focus-tab tab-active py-3 border-b-2">🔥 Hot Leads (3)</button><button data-tab="approvals" class="focus-tab py-3 border-b-2 border-transparent text-muted-foreground">👍 Awaiting Approval (1)</button><button data-tab="tasks" class="focus-tab py-3 border-b-2 border-transparent text-muted-foreground">❗ Urgent Tasks (1)</button></nav></div><div class="pt-6"><div id="tab-hot-leads" class="focus-tab-content space-y-3">${dealsData.slice(0, 3).map(deal => `<a href="#deal-details/${deal.id}" class="block p-3 border rounded-md hover:bg-muted"><b>${deal.client}:</b> ${deal.summary}</a>`).join('')}</div><div id="tab-approvals" class="focus-tab-content page-hidden space-y-3">${assistantDialogs.filter(d => d.status === 'Approval Needed').map(d => `<div data-offer-id="${d.id}" class="approval-item cursor-pointer p-3 border rounded-md hover:bg-muted"><b>${d.client}:</b> Jessica has prepared a new offer. Click to review and send.</div>`).join('')}</div><div id="tab-tasks" class="focus-tab-content page-hidden space-y-3">${tasksData.filter(t => t.status === 'Overdue').map(t => `<a href="#tasks" class="block p-3 border rounded-md hover:bg-muted"><b>Overdue Task:</b> ${t.title}</a>`).join('')}</div></div></div><div class="grid gap-6 mt-6 grid-cols-1 lg:grid-cols-2"><div class="bg-white border rounded-lg p-4"><h3 class="font-semibold mb-4">My Deal Pipeline</h3><div class="h-64"><canvas id="agentPipelineChart"></canvas></div></div><div class="bg-white border rounded-lg p-4"><h3 class="font-semibold mb-4">My Recent Activity</h3><div class="space-y-3 text-sm"><p><span class="font-semibold">Jessica</span> sent an offer to Elon Musk.</p><p>You closed the deal for <span class="font-semibold">Villa in Palm Jumeirah</span>.</p><p>New task assigned: <span class="font-semibold">Follow up with Jeff Bezos</span>.</p></div></div></div>`; renderAgentCharts(); }
+    function renderJessicaPage() { renderAssistantPage('Jessica', document.getElementById('page-jessica')); }
+    function renderLeonardoPage() { renderAssistantPage('Leonardo', document.getElementById('page-leonardo')); }
+    function renderAssistantPage(name, pageElement) { pageElement.innerHTML = `<div class="grid gap-6 md:grid-cols-3"><div class="bg-white border rounded-lg p-4 text-center"><h3 class="text-sm font-medium text-muted-foreground">Hot Leads Today</h3><p class="text-4xl font-bold mt-2">3</p></div><div class="bg-white border rounded-lg p-4 text-center"><h3 class="text-sm font-medium text-muted-foreground">Active Dialogs</h3><p class="text-4xl font-bold mt-2">${assistantDialogs.length}</p></div><div class="bg-white border rounded-lg p-4 text-center"><h3 class="text-sm font-medium text-muted-foreground">Conversion Rate (7d)</h3><p class="text-4xl font-bold mt-2">62%</p></div></div><div class="mt-6 bg-white border rounded-lg"><div class="p-4 flex justify-between items-center border-b"><h3 class="font-semibold">My ${name}'s Control Panel</h3><a href="#jessica-settings" class="text-sm font-medium bg-black text-white py-2 px-4 rounded-md">Settings</a></div><div class="p-4 space-y-4">${assistantDialogs.map(dialog => `<div class="p-4 border rounded-md flex items-start gap-4"><div class="w-10 h-10 rounded-full bg-muted flex-shrink-0 flex items-center justify-center"><span class="font-bold text-sm">${dialog.client.substring(0,2).toUpperCase()}</span></div><div class="flex-1"><p class="font-medium">${dialog.client}</p><p class="text-sm text-muted-foreground italic">"${dialog.lastMessage}"</p></div><div class="flex items-center gap-2 text-sm"><span class="px-2 py-1 rounded-full text-xs font-medium ${dialog.status === 'Approval Needed' ? 'bg-yellow-100 text-yellow-800' : dialog.status === 'Ready for Handoff' ? 'bg-green-100 text-green-800' : 'bg-gray-100'}">${dialog.status}</span></div></div>`).join('')}</div></div>`; }
+    function renderJessicaSettingsPage() { const page = document.getElementById('page-jessica-settings'); page.innerHTML = `<div class="bg-white border rounded-lg"><div class="p-4 border-b"><h3 class="font-semibold">My Jessica's Persona</h3></div><div class="p-6 space-y-6"><div><label class="block text-sm font-medium mb-1">Assistant's Name</label><input type="text" value="Jessica" class="w-full p-2 border rounded-md max-w-md"></div><div><label class="block text-sm font-medium mb-1">Style of Communication (Prompt)</label><textarea class="w-full p-2 border rounded-md h-32">You are Jessica, a friendly, professional, and highly efficient assistant for Alex Ivanov at AKARIA...</textarea></div><div class="flex items-center justify-between"><label class="block text-sm font-medium">Use objects from all agents</label><div class="relative inline-block w-10 align-middle select-none"><input type="checkbox" name="toggle" id="toggle" class="toggle-checkbox absolute block w-6 h-6 rounded-full bg-white border-4 appearance-none cursor-pointer"/><label for="toggle" class="toggle-label block overflow-hidden h-6 rounded-full bg-gray-300 cursor-pointer"></label></div></div><div class="text-right"><a href="#jessica" class="text-sm font-medium bg-black text-white py-2 px-4 rounded-md">Save Changes</a></div></div></div><style>.toggle-checkbox:checked { right: 0; border-color: var(--accent); } .toggle-checkbox:checked + .toggle-label { background-color: var(--accent); }</style>`; }
+    function renderDealsPage() { const page = document.getElementById('page-deals'); const statuses = ['New Lead', 'Qualified', 'Offer Sent', 'Negotiation']; const assistantName = state.currentUserRole === 'CEO' ? 'Leonardo' : 'Jessica'; page.innerHTML = `<div class="bg-white border rounded-lg"><div class="p-4 flex justify-between items-center border-b"><h3 class="font-semibold">All Deals</h3><button class="bg-black text-white text-sm py-2 px-4 rounded-md font-medium">Add Deal</button></div><div class="space-y-4 p-4">${statuses.map(status => { const statusDeals = dealsData.filter(d => d.status === status); if (statusDeals.length === 0) return ''; return `<details open><summary class="font-semibold mb-3 cursor-pointer flex items-center justify-between py-2"><span>${status} (${statusDeals.length})</span><span class="transform transition-transform">${ICONS.chevron}</span></summary><div class="collapsible-content"><div class="border rounded-md"><div class="overflow-x-auto"><table class="w-full text-sm text-left"><thead class="text-xs text-gray-700 uppercase bg-gray-50"><tr><th class="px-6 py-3">Deal</th><th class="px-6 py-3">Client</th><th class="px-6 py-3">Amount</th><th class="px-6 py-3">Agent</th><th class="px-6 py-3">Offer</th></tr></thead><tbody>${statusDeals.map((deal, index) => `<tr class="bg-white border-b hover:bg-muted cursor-pointer" onclick="window.location.hash = '#deal-details/${deal.id}'"><td class="px-6 py-4 font-medium align-middle"><div>${deal.title}</div>${index % 2 === 0 ? `<div class="flex items-center gap-1 text-xs text-accent mt-1">${ICONS.bot} ${assistantName}</div>` : ''}</td><td class="px-6 py-4 align-middle">${deal.client}</td><td class="px-6 py-4 align-middle">$${deal.amount.toLocaleString()}</td><td class="px-6 py-4 align-middle">${deal.agent}</td><td class="px-6 py-4 align-middle">${deal.offerUrl ? `<a href="${deal.offerUrl}" class="font-medium text-accent hover:underline">View Offer</a>` : '-'}</td></tr>`).join('')}</tbody></table></div></div></div></details>` }).join('')}</div></div>`; }
+    function renderDealDetailsPage(dealId) { const page = document.getElementById('page-deal-details'); const deal = dealsData.find(d => d.id === dealId) || dealsData[0]; const assistantName = state.currentUserRole === 'CEO' ? 'Leonardo' : 'Jessica'; page.innerHTML = `<div><a href="#deals" class="text-sm font-medium mb-4 inline-block">&larr; Back to Deals</a><div class="bg-white border rounded-lg"><div class="p-6"><h2 class="text-2xl font-bold">${deal.title}</h2><p class="text-muted-foreground">Client: ${deal.client} | Agent: ${deal.agent}</p></div><div class="p-6 border-t bg-blue-50/50"><div class="flex items-center gap-3 mb-2"><span class="text-accent">${ICONS.bot}</span><h3 class="font-semibold">Summary from ${assistantName}</h3></div><p class="text-sm text-gray-800">${deal.summary}</p></div><div class="p-6 border-t"><h3 class="font-semibold mb-2">Chat Log with ${assistantName}</h3><div class="h-40 overflow-y-auto bg-muted p-3 rounded-md text-sm space-y-3"><p><b>${assistantName}:</b> Hello ${deal.client}, I'm ${assistantName}, assistant to ${deal.agent}...</p><p class="text-right"><b>${deal.client}:</b> Around $${(deal.amount / 1_000_000).toFixed(1)}M</p><p><b>${assistantName}:</b> Perfect. I have prepared a personalized offer for you...</p></div></div>${deal.feedback ? `<div class="p-6 border-t"><h3 class="font-semibold mb-2">Feedback from Showing</h3><div class="text-sm space-y-2"><div><strong>Liked:</strong> ${deal.feedback.liked}</div><div><strong>Disliked:</strong> ${deal.feedback.disliked}</div><div><strong>Rating:</strong> ${'★'.repeat(deal.feedback.rating)}${'☆'.repeat(5-deal.feedback.rating)}</div><div><strong>AI Next Step:</strong> ${deal.feedback.nextStep}</div></div></div>` : ''}</div></div>`; }
+    function renderPropertiesPage() { const page = document.getElementById('page-properties'); page.innerHTML = `<div class="flex justify-between items-center mb-4"><div class="flex gap-2 items-center"><input type="text" placeholder="Search..." class="p-2 border rounded-md w-64"><select class="p-2 border rounded-md"><option>All Types</option></select><div class="flex items-center gap-2 ml-4"><label class="text-sm font-medium">Filter:</label><button class="px-3 py-1 text-sm rounded-full bg-gray-200">My Properties</button><button class="px-3 py-1 text-sm rounded-full">All Properties</button></div></div><button class="bg-black text-white text-sm py-2 px-4 rounded-md font-medium">Add Property</button></div><div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">${propertiesData.map(prop => `<a href="#property-details/${prop.id}" class="bg-white border rounded-lg overflow-hidden group"><div class="relative"><img src="${prop.image}" alt="${prop.name}" class="h-56 w-full object-cover group-hover:scale-105 transition-transform"><div class="absolute top-2 right-2 bg-black/50 text-white text-xs px-2 py-1 rounded-full">${prop.agent}</div></div><div class="p-4"><h4 class="font-semibold">${prop.name}</h4><p class="text-sm text-muted-foreground">${prop.location}</p><div class="flex justify-between items-end mt-4"><div><p class="text-lg font-bold text-accent">$${prop.price.toLocaleString()}</p><p class="text-xs text-muted-foreground">${prop.beds} beds • ${prop.baths} baths • ${prop.area} sqft</p></div></div></div></a>`).join('')}</div>`; }
+    function renderPropertyDetailsPage(propId) { const page = document.getElementById('page-property-details'); const prop = propertiesData.find(p => p.id === propId) || propertiesData[0]; page.innerHTML = `<div><a href="#properties" class="text-sm font-medium mb-4 inline-block">&larr; Back to Properties</a><div class="bg-white border rounded-lg overflow-hidden"><img src="${prop.image}" class="w-full h-96 object-cover"><div class="p-6"><h2 class="text-3xl font-bold">${prop.name}</h2><p class="text-muted-foreground mt-1">${prop.location}</p><div class="mt-4 flex gap-8 text-center border-t border-b py-4"><div><p class="text-2xl font-semibold">${prop.beds}</p><p class="text-sm text-muted-foreground">Beds</p></div><div><p class="text-2xl font-semibold">${prop.baths}</p><p class="text-sm text-muted-foreground">Baths</p></div><div><p class="text-2xl font-semibold">${prop.area.toLocaleString()}</p><p class="text-sm text-muted-foreground">Sqft</p></div><div><p class="text-2xl font-semibold">$${prop.price.toLocaleString()}</p><p class="text-sm text-muted-foreground">Price</p></div></div><p class="mt-4 text-gray-700">A stunning luxury villa offering panoramic sea views...</p></div></div></div>`; }
+    function renderTasksPage() { const page = document.getElementById('page-tasks'); const tasksByStatus = { Overdue: tasksData.filter(t => t.status === 'Overdue' && !t.completed), Today: tasksData.filter(t => t.status === 'Today' && !t.completed), Upcoming: tasksData.filter(t => t.status === 'Upcoming' && !t.completed), Completed: tasksData.filter(t => t.completed) }; const assistantName = state.currentUserRole === 'CEO' ? 'Leonardo' : 'Jessica'; page.innerHTML = `<div><div class="flex justify-end items-center mb-4"><button class="bg-black text-white text-sm py-2 px-4 rounded-md font-medium">Add Task</button></div>${Object.entries(tasksByStatus).map(([status, tasks]) => tasks.length > 0 ? `<div class="mb-6"><h3 class="font-semibold mb-2 text-lg">${status} (${tasks.length})</h3><div class="space-y-2">${tasks.map(task => `<div class="bg-white border rounded-md p-3 flex items-center gap-3"><input type="checkbox" ${task.completed ? 'checked' : ''} class="h-5 w-5"><div class="flex-1"><p class="font-medium ${task.completed ? 'line-through text-muted-foreground' : ''}">${task.title}</p><div class="flex items-center gap-2"><a href="#deal-details/1" class="text-xs text-muted-foreground hover:underline">Related Deal: Villa in Palm Jumeirah</a>${task.createdBy === 'Jessica' ? `<span class="flex items-center gap-1 text-xs text-accent bg-blue-50 px-2 py-0.5 rounded-full" title="Created by ${assistantName}">${ICONS.bot} ${assistantName}</span>` : ''}</div></div><span class="text-sm font-medium ${status === 'Overdue' ? 'text-red-600' : 'text-muted-foreground'}">${task.due}</span></div>`).join('')}</div></div>` : '').join('')}</div>`; }
+    function renderAnalyticsPage() { const page = document.getElementById('page-analytics'); page.innerHTML = `<div class="bg-white border rounded-lg p-6"><div class="flex justify-between items-center mb-4"><h3 class="font-semibold">Strategic Analytics</h3><button id="generate-forecast-btn" class="text-sm font-medium bg-black text-white py-2 px-4 rounded-md">Generate Revenue Forecast</button></div><div class="p-6 border rounded-md bg-blue-50/50"><div class="flex items-center gap-3 mb-2"><span class="text-accent">${ICONS.bot}</span><h3 class="font-semibold">Recommendation from Leonardo</h3></div><p class="text-sm text-gray-800">Data shows that leads from Property Finder convert 10% better. Recommend reallocating 15% of the Bayut budget to maximize ROI.</p></div></div><div class="grid gap-6 mt-6 md:grid-cols-2 lg:grid-cols-7"><div class="lg:col-span-4 bg-white border rounded-lg p-4"><h3 class="font-semibold mb-4">Sales Funnel Conversion</h3><div class="h-80"><canvas id="funnelChart"></canvas></div></div><div class="lg:col-span-3 bg-white border rounded-lg p-4"><h3 class="font-semibold mb-4">Agent Productivity</h3><div class="h-80"><canvas id="agentChart"></canvas></div></div></div>`; renderAnalyticsCharts(); }
+    function renderSettingsPage() { const page = document.getElementById('page-settings'); page.innerHTML = `<div><div class="bg-white border rounded-lg"><div class="p-4 border-b"><h3 class="font-semibold">User Management</h3></div><div class="p-6"><button class="bg-black text-white text-sm py-2 px-4 rounded-md font-medium mb-4">Invite User</button><div class="border rounded-lg overflow-hidden"><table class="w-full text-sm text-left"><thead class="text-xs text-gray-700 uppercase bg-gray-50"><tr><th class="px-6 py-3">Name</th><th class="px-6 py-3">Role</th><th class="px-6 py-3">Status</th><th class="px-6 py-3">Action</th></tr></thead><tbody>${Object.values(users).map(user => `<tr class="bg-white border-b hover:bg-muted"><td class="px-6 py-4 font-medium flex items-center gap-3"><img src="${user.avatar}" class="h-8 w-8 rounded-full">${user.name}</td><td class="px-6 py-4">${user.role}</td><td class="px-6 py-4"><span class="bg-green-100 text-green-800 text-xs font-medium mr-2 px-2.5 py-0.5 rounded-full">Active</span></td><td class="px-6 py-4"><a href="#" class="font-medium text-accent hover:underline">Edit</a></td></tr>`).join('')}</tbody></table></div></div></div></div>`; }
+    function renderImportsPage() { const page = document.getElementById('page-imports'); page.innerHTML = `<div class="grid gap-6 grid-cols-1 lg:grid-cols-3"><div class="lg:col-span-1 bg-white border rounded-lg"><div class="p-4 border-b"><h3 class="font-semibold">Import New Leads</h3></div><div class="p-6"><div class="flex items-center justify-center w-full"><label for="dropzone-file" class="flex flex-col items-center justify-center w-full h-64 border-2 border-border border-dashed rounded-lg cursor-pointer bg-muted hover:bg-gray-100"><div class="flex flex-col items-center justify-center pt-5 pb-6"><svg class="w-8 h-8 mb-4 text-gray-500" viewBox="0 0 20 16" fill="none" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2"/></svg><p class="mb-2 text-sm text-gray-500"><span class="font-semibold">Click to upload</span></p><p class="text-xs text-gray-500">CSV, XLS, or XLSX</p></div><input id="dropzone-file" type="file" class="hidden" /></label></div></div></div><div class="lg:col-span-2 bg-white border rounded-lg"><div class="p-4 border-b"><h3 class="font-semibold">Distribute Leads</h3></div><div class="grid grid-cols-3 divide-x border-b"><div class="p-4 text-center"><h4 class="text-sm text-muted-foreground">Total Imported</h4><p class="text-2xl font-bold">${importedLeads.length}</p></div><div class="p-4 text-center"><h4 class="text-sm text-muted-foreground">Assigned</h4><p class="text-2xl font-bold">0</p></div><div class="p-4 text-center"><h4 class="text-sm text-muted-foreground">Unassigned</h4><p id="unassigned-count" class="text-2xl font-bold text-accent">${state.unassignedLeads}</p></div></div><div class="p-6"><form id="distribute-form" class="flex items-end gap-4"><div class="flex-1"><label class="block text-sm font-medium mb-1">Number of Leads</label><input id="distribute-count" type="number" min="1" max="${state.unassignedLeads}" value="${state.unassignedLeads}" class="p-2 border rounded-md w-full"></div><button type="submit" class="bg-black text-white py-2 px-4 rounded-md font-medium">Distribute Randomly</button></form></div></div></div>`; }
+
+    function renderOfferPage(token) { const deal = dealsData.find(d => d.id === parseInt(token)) || dealsData[4]; const offerProperties = propertiesData.slice(0, 3); const offerPage = document.getElementById('page-offer'); offerPage.innerHTML = `<div class="max-w-4xl mx-auto p-6 md:p-12"><header class="text-center mb-12"><svg class="h-10 w-10 mx-auto text-accent mb-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3L2 9l10 6 10-6-10-6z"/><path d="M2 9l10 6 10-6"/><path d="M2 15l10 6 10-6"/></svg><h1 class="text-3xl font-bold">A Personal Selection for ${deal.client}</h1><p class="text-muted-foreground mt-2">Prepared by Jessica on behalf of Alex Ivanov at AKARIA Portal.</p></header><div class="space-y-8">${offerProperties.map(prop => `<div class="bg-white border rounded-lg overflow-hidden md:flex"><img src="${prop.image}" class="md:w-1/3 h-64 md:h-auto object-cover"><div class="p-6 flex flex-col"><h3 class="text-xl font-semibold">${prop.name}</h3><p class="text-sm text-muted-foreground mt-1">${prop.location}</p><p class="text-gray-700 mt-4 text-sm flex-1">A stunning luxury villa offering panoramic sea views from every room...</p><div class="flex justify-between items-end mt-4"><div><p class="text-lg font-bold text-accent">$${prop.price.toLocaleString()}</p><p class="text-xs text-muted-foreground">${prop.beds} beds • ${prop.baths} baths • ${prop.area} sqft</p></div></div></div></div>`).join('')}</div><footer class="text-center mt-12 border-t pt-8"><h3 class="text-xl font-semibold">Ready for the next step?</h3><p class="text-muted-foreground mt-2">Let us know if any of these properties catch your eye, and Alex Ivanov will personally get in touch.</p><a href="#dashboard" class="mt-6 inline-block bg-accent text-white font-medium py-3 px-8 rounded-lg text-lg">I'm Interested, Contact Me</a></footer></div>`; }
+
+    // -----------------------------------------------------------------------------
+    // 4. CHARTS & LIBRARIES INITIALIZATION
+    // -----------------------------------------------------------------------------
+
+    let chartInstances = {};
+    function destroyAllCharts() { Object.values(chartInstances).forEach(chart => chart.destroy()); chartInstances = {}; }
+    function renderAgentCharts() { destroyAllCharts(); const pipelineCtx = document.getElementById('agentPipelineChart')?.getContext('2d'); if (pipelineCtx) { chartInstances.pipeline = new Chart(pipelineCtx, { type: 'bar', data: { labels: ['New', 'Qualified', 'Offer', 'Negotiation'], datasets: [{ label: 'My Deals', data: [2, 3, 1, 2], backgroundColor: ['#93c5fd', '#60a5fa', '#3b82f6', '#2563eb'], borderRadius: 4 }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } } }); } }
+    function renderCeoCharts() { destroyAllCharts(); const leadsCtx = document.getElementById('ceoLeadsChart')?.getContext('2d'); if (leadsCtx) { chartInstances.leads = new Chart(leadsCtx, { type: 'line', data: { labels: ['W1', 'W2', 'W3', 'W4', 'W5', 'W6', 'W7', 'W8'], datasets: [{ label: 'New Leads', data: [22, 25, 31, 28, 35, 41, 38, 45], borderColor: '#0070f3', tension: 0.3, fill: false }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } } }); } }
+    function renderAnalyticsCharts() { destroyAllCharts(); const funnelCtx = document.getElementById('funnelChart')?.getContext('2d'); const agentCtx = document.getElementById('agentChart')?.getContext('2d'); if(funnelCtx) { chartInstances.funnel = new Chart(funnelCtx, { type: 'bar', data: { labels: ['New Leads', 'Qualified', 'Offer Sent', 'Negotiation', 'Closed'], datasets: [{ label: 'Conversion', data: [100, 62, 45, 25, 15], backgroundColor: ['#2563eb', '#3b82f6', '#60a5fa', '#93c5fd', '#bfdbfe'] }] }, options: { indexAxis: 'y', responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } } }); } if(agentCtx) { chartInstances.agent = new Chart(agentCtx, { type: 'pie', data: { labels: ['Alex Ivanov', 'Anna Petrova', 'Other'], datasets: [{ label: 'Deals Closed (MTD)', data: [12, 9, 5], backgroundColor: ['#2563eb', '#60a5fa', '#bfdbfe'], borderColor: '#fff', borderWidth: 4 }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom' } } } }); } }
+
+    // -----------------------------------------------------------------------------
+    // 5. MODAL LOGIC
+    // -----------------------------------------------------------------------------
+    const modal = { container: document.getElementById('modal-container'), title: document.getElementById('modal-title'), body: document.getElementById('modal-body'), closeBtn: document.getElementById('modal-close-btn') };
+    function showModal(title, contentHTML) { modal.title.textContent = title; modal.body.innerHTML = contentHTML; modal.container.dataset.state = 'open'; }
+    function hideModal() { modal.container.dataset.state = 'closed'; }
+    modal.closeBtn.onclick = hideModal;
+    modal.container.onclick = (e) => { if (e.target === modal.container) hideModal(); };
+
+    // -----------------------------------------------------------------------------
+    // 6. EVENT LISTENERS & INITIALIZATION
+    // -----------------------------------------------------------------------------
+    
+    function updateUserUI() {
+        const user = users[state.currentUserRole];
+        document.getElementById('user-avatar').src = user.avatar;
+        document.getElementById('user-name').textContent = user.name;
+        document.getElementById('user-role-display').textContent = user.role;
+        renderSidebar();
+        handleRouting();
+        document.querySelectorAll('.role-btn').forEach(btn => {
+             btn.classList.remove('bg-black', 'text-white');
+             if(btn.dataset.role === state.currentUserRole) btn.classList.add('bg-black', 'text-white');
+        });
+    }
+
+    document.getElementById('role-switcher').addEventListener('click', (e) => { if (e.target.closest('.role-btn')) { state.currentUserRole = e.target.closest('.role-btn').dataset.role; window.location.hash = '#dashboard'; updateUserUI(); } });
+    document.getElementById('sidebar-nav-links').addEventListener('click', (e) => { const link = e.target.closest('a'); if (link) { e.preventDefault(); window.location.hash = link.getAttribute('href'); } });
+    
+    document.getElementById('page-content-wrapper').addEventListener('click', e => {
+        const link = e.target.closest('a');
+        if (link && link.getAttribute('href')?.startsWith('#')) { e.preventDefault(); window.location.hash = link.getAttribute('href'); }
+        
+        if (e.target.closest('.focus-tab')) {
+            const tabButton = e.target.closest('.focus-tab');
+            document.querySelectorAll('.focus-tab').forEach(t => t.classList.remove('tab-active', 'text-muted-foreground'));
+            tabButton.classList.add('tab-active'); tabButton.classList.remove('text-muted-foreground');
+            document.querySelectorAll('.focus-tab-content').forEach(c => c.classList.add('page-hidden'));
+            document.getElementById(`tab-${tabButton.dataset.tab}`).classList.remove('page-hidden');
+        }
+        
+        if (e.target.closest('.approval-item')) {
+            const offerId = e.target.closest('.approval-item').dataset.offerId;
+            showModal('Review Offer for Elon Musk', `<div class="bg-muted p-4 rounded-md"><h4 class="font-semibold">Mini-Landing Page Preview</h4><p class="text-sm text-muted-foreground">This is a simulation of the offer page that will be sent.</p><img src="https://picsum.photos/seed/offer${offerId}/800/450" class="mt-4 rounded-md w-full"></div><div class="mt-6 flex justify-end gap-3"><button class="px-4 py-2 text-sm font-medium border rounded-md" onclick="document.getElementById('modal-container').dataset.state = 'closed'">Reject</button><button class="px-4 py-2 text-sm font-medium bg-black text-white rounded-md" onclick="document.getElementById('modal-container').dataset.state = 'closed'">Approve & Send</button></div>`);
+        }
+        
+        if (e.target.id === 'generate-forecast-btn') {
+            showModal('Q4 Revenue Forecast', `<div class="text-center"><p class="text-sm text-muted-foreground">Generated by Leonardo</p><p class="text-5xl font-bold my-4">$2.5M - $2.8M</p><p class="text-sm">Based on the current pipeline and a <span class="font-semibold">85% confidence interval</span>.</p></div>`);
+        }
+
+        if (e.target.closest('details summary')) {
+            const details = e.target.closest('details');
+            const icon = details.querySelector('summary svg');
+            // Timeout to allow the 'open' attribute to update
+            setTimeout(() => {
+                if (details.open) {
+                    icon.style.transform = 'rotate(0deg)';
+                } else {
+                    icon.style.transform = 'rotate(-90deg)';
+                }
+            }, 0);
+        }
+        
+        const distributeForm = e.target.closest('#distribute-form');
+        if (distributeForm) {
+            e.preventDefault();
+            const countInput = document.getElementById('distribute-count');
+            const count = parseInt(countInput.value);
+            if (count > 0 && count <= state.unassignedLeads) {
+                state.unassignedLeads -= count;
+                alert(`${count} leads have been randomly distributed to agents and are now being processed by their AI assistants.`);
+                renderImportsPage();
+            } else {
+                alert('Please enter a valid number of leads to distribute.');
+            }
+        }
+    });
+
+    document.getElementById('mobile-menu-btn').addEventListener('click', () => { document.getElementById('sidebar').classList.toggle('hidden'); });
+    window.addEventListener('hashchange', handleRouting);
+    updateUserUI();
+});
+</script>
+
+</body>
+</html>
