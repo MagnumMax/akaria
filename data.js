@@ -108,7 +108,7 @@ const navLinks = {
         { id: 'tasks', name: 'Tasks', icon: ICONS.tasks },
         { id: 'analytics', name: 'Analytics', icon: ICONS.analytics },
         { type: 'divider' },
-        { id: 'leonardo', name: 'My Leonardo', icon: ICONS.assistant }
+        { id: 'my-assistant', name: 'My Assistant', icon: ICONS.assistant }
     ],
     Agent: [
         { id: 'dashboard', name: 'Dashboard', icon: ICONS.dashboard },
@@ -116,7 +116,7 @@ const navLinks = {
         { id: 'deals', name: 'My Deals', icon: ICONS.deals },
         { id: 'properties', name: 'Properties', icon: ICONS.properties },
         { type: 'divider' },
-        { id: 'jessica', name: 'My Jessica', icon: ICONS.assistant }
+        { id: 'my-assistant', name: 'My Assistant', icon: ICONS.assistant }
     ],
     Admin: [
         { id: 'dashboard', name: 'Dashboard', icon: ICONS.dashboard },

@@ -49,9 +49,7 @@
             <main id="main-content" class="flex-1 overflow-y-auto bg-muted/40">
                 <div id="page-content-wrapper" class="p-4 md:p-6">
                     <section id="page-dashboard" class="page-hidden"></section>
-                    <section id="page-jessica" class="page-hidden"></section>
-                    <section id="page-leonardo" class="page-hidden"></section>
-                    <section id="page-jessica-settings" class="page-hidden"></section>
+
                     <section id="page-deals" class="page-hidden"></section>
                     <section id="page-deal-details" class="page-hidden"></section>
                     <section id="page-properties" class="page-hidden"></section>
@@ -60,6 +58,8 @@
                     <section id="page-analytics" class="page-hidden"></section>
                     <section id="page-settings" class="page-hidden"></section>
                     <section id="page-imports" class="page-hidden"></section>
+                    <section id="page-my-assistant" class="page-hidden"></section>
+                    <section id="page-my-assistant-settings" class="page-hidden"></section>
                 </div>
             </main>
         </div>
@@ -136,8 +136,8 @@ document.addEventListener('DOMContentLoaded', () => {
     // -----------------------------------------------------------------------------
     
     const navLinks = {
-        CEO: [ { id: 'dashboard', name: 'Dashboard', icon: ICONS.dashboard }, { id: 'deals', name: 'Deals', icon: ICONS.deals }, { id: 'properties', name: 'Properties', icon: ICONS.properties }, { id: 'tasks', name: 'Tasks', icon: ICONS.tasks }, { id: 'analytics', name: 'Analytics', icon: ICONS.analytics }, { id: 'settings', name: 'Settings', icon: ICONS.settings }, { type: 'divider' }, { id: 'leonardo', name: 'My Leonardo', icon: ICONS.assistant }],
-        Agent: [ { id: 'dashboard', name: 'Dashboard', icon: ICONS.dashboard }, { id: 'tasks', name: 'My Tasks', icon: ICONS.tasks }, { id: 'deals', name: 'My Deals', icon: ICONS.deals }, { id: 'properties', name: 'Properties', icon: ICONS.properties }, { type: 'divider' }, { id: 'jessica', name: 'My Jessica', icon: ICONS.assistant }],
+        CEO: [ { id: 'dashboard', name: 'Dashboard', icon: ICONS.dashboard }, { id: 'deals', name: 'Deals', icon: ICONS.deals }, { id: 'properties', name: 'Properties', icon: ICONS.properties }, { id: 'tasks', name: 'Tasks', icon: ICONS.tasks }, { id: 'analytics', name: 'Analytics', icon: ICONS.analytics }, { id: 'settings', name: 'Settings', icon: ICONS.settings }, { type: 'divider' }, { id: 'my-assistant', name: 'My Assistant', icon: ICONS.assistant }],
+        Agent: [ { id: 'dashboard', name: 'Dashboard', icon: ICONS.dashboard }, { id: 'tasks', name: 'My Tasks', icon: ICONS.tasks }, { id: 'deals', name: 'My Deals', icon: ICONS.deals }, { id: 'properties', name: 'Properties', icon: ICONS.properties }, { type: 'divider' }, { id: 'my-assistant', name: 'My Assistant', icon: ICONS.assistant }],
         Admin: [ { id: 'dashboard', name: 'Dashboard', icon: ICONS.dashboard }, { id: 'imports', name: 'Imports', icon: ICONS.imports }, { id: 'properties', name: 'Manage Properties', icon: ICONS.properties }, { id: 'settings', name: 'Settings', icon: ICONS.settings }]
     };
 
@@ -165,7 +165,7 @@ document.addEventListener('DOMContentLoaded', () => {
             targetPage.classList.remove('page-hidden');
             state.currentPage = pageId;
             
-            const renderMap = { 'dashboard': renderDashboard, 'jessica': renderJessicaPage, 'leonardo': renderLeonardoPage, 'jessica-settings': renderJessicaSettingsPage, 'deals': renderDealsPage, 'deal-details': () => renderDealDetailsPage(contextId), 'properties': renderPropertiesPage, 'property-details': () => renderPropertyDetailsPage(contextId), 'tasks': renderTasksPage, 'analytics': renderAnalyticsPage, 'settings': renderSettingsPage, 'imports': renderImportsPage };
+            const renderMap = { 'dashboard': renderDashboard, 'my-assistant': renderMyAssistantPage, 'my-assistant-settings': renderMyAssistantSettingsPage, 'deals': renderDealsPage, 'deal-details': () => renderDealDetailsPage(contextId), 'properties': renderPropertiesPage, 'property-details': () => renderPropertyDetailsPage(contextId), 'tasks': renderTasksPage, 'analytics': renderAnalyticsPage, 'settings': renderSettingsPage, 'imports': renderImportsPage };
             if (renderMap[pageId]) renderMap[pageId]();
 
             const pageConfig = (navLinks[state.currentUserRole] || []).find(p => p.id === pageId);
@@ -234,10 +234,377 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function renderCeoDashboard(page) { const kpiData = [ { title: 'Total Revenue', value: '$12,450,000', change: '+15.2% from last month'}, { title: 'Active Deals', value: '32', change: '+5 from last week'}, { title: 'New Leads (Today)', value: '18', change: '+2 since yesterday' }, { title: 'Conversion Rate', value: '4.8%', change: '-0.2% from last month' }]; page.innerHTML = `<div class="grid gap-6 md:grid-cols-2 lg:grid-cols-4">${kpiData.map(kpi => `<div class="bg-white border rounded-lg p-4"><h3 class="text-sm font-medium text-muted-foreground">${kpi.title}</h3><p class="text-2xl font-bold mt-4">${kpi.value}</p><p class="text-xs text-muted-foreground">${kpi.change}</p></div>`).join('')}</div><div class="grid gap-6 mt-6 grid-cols-1 lg:grid-cols-3"><div class="lg:col-span-2 bg-white border rounded-lg p-4"><h3 class="font-semibold mb-4">Team Pulse</h3><table class="w-full text-sm"><thead><tr class="text-left text-muted-foreground"><th class="py-2">Agent</th><th>Active Dialogs</th><th>Avg. Response</th><th>Conversion</th></tr></thead><tbody>${teamPulseData.map(p => `<tr class="border-b"><td class="py-3 font-medium">${p.agent}</td><td>${p.dialogs}</td><td>${p.responseTime}</td><td>${p.conversion}</td></tr>`).join('')}</tbody></table></div><div class="bg-white border rounded-lg p-4 flex flex-col justify-center items-center text-center"><div class="bg-yellow-100 text-yellow-800 rounded-full p-3">${ICONS.anomaly}</div><h3 class="font-semibold mt-4">AI Anomaly Detected</h3><p class="text-sm text-muted-foreground mt-1">${ceoAnomaly.agent}'s ${ceoAnomaly.metric} is ${ceoAnomaly.value}. <a href="#" class="text-accent font-medium">Review</a></p></div></div><div class="mt-6 bg-white border rounded-lg p-4"><h3 class="font-semibold mb-4">Leads per Week</h3><div class="h-64"><canvas id="ceoLeadsChart"></canvas></div></div>`; renderCeoCharts(); }
     function renderAgentDashboard(page) { page.innerHTML = `<div class="bg-white border rounded-lg p-6"><h3 class="font-semibold text-xl mb-4">My Focus Today</h3><div class="border-b"><nav class="-mb-px flex gap-6" id="focus-tabs"><button data-tab="hot-leads" class="focus-tab tab-active py-3 border-b-2">🔥 Hot Leads (3)</button><button data-tab="approvals" class="focus-tab py-3 border-b-2 border-transparent text-muted-foreground">👍 Awaiting Approval (1)</button><button data-tab="tasks" class="focus-tab py-3 border-b-2 border-transparent text-muted-foreground">❗ Urgent Tasks (1)</button></nav></div><div class="pt-6"><div id="tab-hot-leads" class="focus-tab-content space-y-3">${dealsData.slice(0, 3).map(deal => `<a href="#deal-details/${deal.id}" class="block p-3 border rounded-md hover:bg-muted"><b>${deal.client}:</b> ${deal.summary}</a>`).join('')}</div><div id="tab-approvals" class="focus-tab-content page-hidden space-y-3">${assistantDialogs.filter(d => d.status === 'Approval Needed').map(d => `<div data-offer-id="${d.id}" class="approval-item cursor-pointer p-3 border rounded-md hover:bg-muted"><b>${d.client}:</b> Jessica has prepared a new offer. Click to review and send.</div>`).join('')}</div><div id="tab-tasks" class="focus-tab-content page-hidden space-y-3">${tasksData.filter(t => t.status === 'Overdue').map(t => `<a href="#tasks" class="block p-3 border rounded-md hover:bg-muted"><b>Overdue Task:</b> ${t.title}</a>`).join('')}</div></div></div><div class="grid gap-6 mt-6 grid-cols-1 lg:grid-cols-2"><div class="bg-white border rounded-lg p-4"><h3 class="font-semibold mb-4">My Deal Pipeline</h3><div class="h-64"><canvas id="agentPipelineChart"></canvas></div></div><div class="bg-white border rounded-lg p-4"><h3 class="font-semibold mb-4">My Recent Activity</h3><div class="space-y-3 text-sm"><p><span class="font-semibold">Jessica</span> sent an offer to Elon Musk.</p><p>You closed the deal for <span class="font-semibold">Villa in Palm Jumeirah</span>.</p><p>New task assigned: <span class="font-semibold">Follow up with Jeff Bezos</span>.</p></div></div></div>`; renderAgentCharts(); }
-    function renderJessicaPage() { renderAssistantPage('Jessica', document.getElementById('page-jessica')); }
-    function renderLeonardoPage() { renderAssistantPage('Leonardo', document.getElementById('page-leonardo')); }
-    function renderAssistantPage(name, pageElement) { pageElement.innerHTML = `<div class="grid gap-6 md:grid-cols-3"><div class="bg-white border rounded-lg p-4 text-center"><h3 class="text-sm font-medium text-muted-foreground">Hot Leads Today</h3><p class="text-4xl font-bold mt-2">3</p></div><div class="bg-white border rounded-lg p-4 text-center"><h3 class="text-sm font-medium text-muted-foreground">Active Dialogs</h3><p class="text-4xl font-bold mt-2">${assistantDialogs.length}</p></div><div class="bg-white border rounded-lg p-4 text-center"><h3 class="text-sm font-medium text-muted-foreground">Conversion Rate (7d)</h3><p class="text-4xl font-bold mt-2">62%</p></div></div><div class="mt-6 bg-white border rounded-lg"><div class="p-4 flex justify-between items-center border-b"><h3 class="font-semibold">My ${name}'s Control Panel</h3><a href="#jessica-settings" class="text-sm font-medium bg-black text-white py-2 px-4 rounded-md">Settings</a></div><div class="p-4 space-y-4">${assistantDialogs.map(dialog => `<div class="p-4 border rounded-md flex items-start gap-4"><div class="w-10 h-10 rounded-full bg-muted flex-shrink-0 flex items-center justify-center"><span class="font-bold text-sm">${dialog.client.substring(0,2).toUpperCase()}</span></div><div class="flex-1"><p class="font-medium">${dialog.client}</p><p class="text-sm text-muted-foreground italic">"${dialog.lastMessage}"</p></div><div class="flex items-center gap-2 text-sm"><span class="px-2 py-1 rounded-full text-xs font-medium ${dialog.status === 'Approval Needed' ? 'bg-yellow-100 text-yellow-800' : dialog.status === 'Ready for Handoff' ? 'bg-green-100 text-green-800' : 'bg-gray-100'}">${dialog.status}</span></div></div>`).join('')}</div></div>`; }
-    function renderJessicaSettingsPage() { const page = document.getElementById('page-jessica-settings'); page.innerHTML = `<div class="bg-white border rounded-lg"><div class="p-4 border-b"><h3 class="font-semibold">My Jessica's Persona</h3></div><div class="p-6 space-y-6"><div><label class="block text-sm font-medium mb-1">Assistant's Name</label><input type="text" value="Jessica" class="w-full p-2 border rounded-md max-w-md"></div><div><label class="block text-sm font-medium mb-1">Style of Communication (Prompt)</label><textarea class="w-full p-2 border rounded-md h-32">You are Jessica, a friendly, professional, and highly efficient assistant for Alex Ivanov at AKARIA...</textarea></div><div class="flex items-center justify-between"><label class="block text-sm font-medium">Use objects from all agents</label><div class="relative inline-block w-10 align-middle select-none"><input type="checkbox" name="toggle" id="toggle" class="toggle-checkbox absolute block w-6 h-6 rounded-full bg-white border-4 appearance-none cursor-pointer"/><label for="toggle" class="toggle-label block overflow-hidden h-6 rounded-full bg-gray-300 cursor-pointer"></label></div></div><div class="text-right"><a href="#jessica" class="text-sm font-medium bg-black text-white py-2 px-4 rounded-md">Save Changes</a></div></div></div>`; }
+    function renderMyAssistantPage() {
+    const page = document.getElementById('page-my-assistant');
+    page.innerHTML = `
+        <div class="space-y-6">
+            <!-- Статистика -->
+            <div class="grid gap-6 md:grid-cols-3">
+                <div class="bg-white border rounded-lg p-4 text-center">
+                    <h3 class="text-sm font-medium text-muted-foreground">Hot Leads Today</h3>
+                    <p class="text-4xl font-bold mt-2">3</p>
+                </div>
+                <div class="bg-white border rounded-lg p-4 text-center">
+                    <h3 class="text-sm font-medium text-muted-foreground">Active Dialogs</h3>
+                    <p class="text-4xl font-bold mt-2">${assistantDialogs.length}</p>
+                </div>
+                <div class="bg-white border rounded-lg p-4 text-center">
+                    <h3 class="text-sm font-medium text-muted-foreground">Conversion Rate (7d)</h3>
+                    <p class="text-4xl font-bold mt-2">62%</p>
+                </div>
+            </div>
+
+            <!-- Кнопка Settings -->
+            <div class="bg-white border rounded-lg p-4">
+                <div class="flex justify-between items-center">
+                    <h3 class="font-semibold">Assistant Settings</h3>
+                    <a href="#my-assistant-settings" class="text-sm font-medium bg-black text-white py-2 px-4 rounded-md hover:bg-gray-800 transition-colors">Settings</a>
+                </div>
+            </div>
+
+            <!-- Аналитика и инсайты -->
+            <div class="bg-white border rounded-lg">
+                <div class="p-4 border-b">
+                    <h3 class="font-semibold">Аналитика и инсайты</h3>
+                </div>
+                <div class="p-4 space-y-6">
+                    <!-- Рекомендации ассистента -->
+                    <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                        <h4 class="font-medium text-blue-900 mb-3">Рекомендации ассистента</h4>
+                        <div class="space-y-2">
+                            <div class="flex items-start gap-3">
+                                <div class="w-2 h-2 bg-blue-500 rounded-full mt-2 flex-shrink-0"></div>
+                                <p class="text-sm text-blue-800">Рекомендуется увеличить частоту follow-up сообщений для горячих лидов на 25%</p>
+                            </div>
+                            <div class="flex items-start gap-3">
+                                <div class="w-2 h-2 bg-blue-500 rounded-full mt-2 flex-shrink-0"></div>
+                                <p class="text-sm text-blue-800">Оптимальное время для контакта с клиентами: 10:00-12:00 и 14:00-16:00</p>
+                            </div>
+                            <div class="flex items-start gap-3">
+                                <div class="w-2 h-2 bg-blue-500 rounded-full mt-2 flex-shrink-0"></div>
+                                <p class="text-sm text-blue-800">Персонализированные сообщения показывают на 40% лучший отклик</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- График активности -->
+                    <div>
+                        <h4 class="font-medium mb-3">График активности взаимодействий</h4>
+                        <div class="bg-gray-50 rounded-lg p-4 h-64 flex items-center justify-center">
+                            <canvas id="assistantActivityChart" width="400" height="200"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- Метрики эффективности -->
+                    <div>
+                        <h4 class="font-medium mb-3">Метрики эффективности</h4>
+                        <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+                            <div class="bg-green-50 border border-green-200 rounded-lg p-3 text-center">
+                                <p class="text-sm text-green-600 font-medium">Решенных задач</p>
+                                <p class="text-2xl font-bold text-green-800 mt-1">47</p>
+                                <p class="text-xs text-green-600 mt-1">за неделю</p>
+                            </div>
+                            <div class="bg-purple-50 border border-purple-200 rounded-lg p-3 text-center">
+                                <p class="text-sm text-purple-600 font-medium">Сэкономлено времени</p>
+                                <p class="text-2xl font-bold text-purple-800 mt-1">12.5ч</p>
+                                <p class="text-xs text-purple-600 mt-1">за неделю</p>
+                            </div>
+                            <div class="bg-orange-50 border border-orange-200 rounded-lg p-3 text-center">
+                                <p class="text-sm text-orange-600 font-medium">Средний отклик</p>
+                                <p class="text-2xl font-bold text-orange-800 mt-1">2.3м</p>
+                                <p class="text-xs text-orange-600 mt-1">время ответа</p>
+                            </div>
+                            <div class="bg-indigo-50 border border-indigo-200 rounded-lg p-3 text-center">
+                                <p class="text-sm text-indigo-600 font-medium">Успешность</p>
+                                <p class="text-2xl font-bold text-indigo-800 mt-1">94%</p>
+                                <p class="text-xs text-indigo-600 mt-1">выполненных задач</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Активные диалоги -->
+            <div class="bg-white border rounded-lg">
+                <div class="p-4 border-b">
+                    <h3 class="font-semibold">Активные диалоги</h3>
+                </div>
+                <div class="p-4 space-y-4">
+                    ${assistantDialogs.map(dialog => `
+                        <div class="p-4 border rounded-md flex items-start gap-4 hover:bg-gray-50 transition-colors">
+                            <div class="w-10 h-10 rounded-full bg-muted flex-shrink-0 flex items-center justify-center">
+                                <span class="font-bold text-sm">${dialog.client.substring(0,2).toUpperCase()}</span>
+                            </div>
+                            <div class="flex-1">
+                                <p class="font-medium">${dialog.client}</p>
+                                <p class="text-sm text-muted-foreground italic">"${dialog.lastMessage}"</p>
+                            </div>
+                            <div class="flex items-center gap-2 text-sm">
+                                <span class="px-2 py-1 rounded-full text-xs font-medium ${
+                                    dialog.status === 'Approval Needed' ? 'bg-yellow-100 text-yellow-800' : 
+                                    dialog.status === 'Ready for Handoff' ? 'bg-green-100 text-green-800' : 
+                                    'bg-gray-100'
+                                }">${dialog.status}</span>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+            </div>
+        </div>
+    `;
+    
+    // Инициализируем график активности после рендеринга
+    setTimeout(() => {
+        renderAssistantActivityChart();
+    }, 100);
+}
+    function renderMyAssistantSettingsPage() {
+    const page = document.getElementById('page-my-assistant-settings');
+    page.innerHTML = `
+        <div class="space-y-6">
+            <!-- Основные настройки ассистента -->
+            <div class="bg-white border rounded-lg">
+                <div class="p-4 border-b">
+                    <h3 class="font-semibold">Настройки ассистента</h3>
+                </div>
+                <div class="p-6 space-y-6">
+                    <div>
+                        <label class="block text-sm font-medium mb-1">Имя ассистента</label>
+                        <input type="text" value="AI Assistant" class="w-full p-2 border rounded-md max-w-md">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-1">Персональный промпт</label>
+                        <textarea class="w-full p-2 border rounded-md h-32" placeholder="Опишите, как должен вести себя ваш ассистент...">Вы - профессиональный ИИ-ассистент для работы с недвижимостью. Будьте дружелюбны, эффективны и всегда готовы помочь с задачами клиента.</textarea>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <label class="block text-sm font-medium">Использовать данные от всех агентов</label>
+                        <div class="relative inline-block w-10 align-middle select-none">
+                            <input type="checkbox" name="toggle" id="toggle" class="toggle-checkbox absolute block w-6 h-6 rounded-full bg-white border-4 appearance-none cursor-pointer"/>
+                            <label for="toggle" class="toggle-label block overflow-hidden h-6 rounded-full bg-gray-300 cursor-pointer"></label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Предустановленные шаблоны стилей общения -->
+            <div class="bg-white border rounded-lg">
+                <div class="p-4 border-b">
+                    <h3 class="font-semibold">Стили общения</h3>
+                </div>
+                <div class="p-6">
+                    <div class="grid gap-4 md:grid-cols-3">
+                        <div class="border rounded-lg p-4 cursor-pointer hover:bg-blue-50 hover:border-blue-300 transition-colors" onclick="selectCommunicationStyle('formal')">
+                            <div class="flex items-center gap-2 mb-2">
+                                <input type="radio" name="communication-style" value="formal" class="text-blue-600">
+                                <h4 class="font-medium">Формальный</h4>
+                            </div>
+                            <p class="text-sm text-gray-600">Профессиональный и деловой стиль общения для корпоративной среды</p>
+                        </div>
+                        <div class="border rounded-lg p-4 cursor-pointer hover:bg-green-50 hover:border-green-300 transition-colors" onclick="selectCommunicationStyle('friendly')">
+                            <div class="flex items-center gap-2 mb-2">
+                                <input type="radio" name="communication-style" value="friendly" class="text-green-600" checked>
+                                <h4 class="font-medium">Дружелюбный</h4>
+                            </div>
+                            <p class="text-sm text-gray-600">Теплый и приветливый стиль для создания комфортной атмосферы</p>
+                        </div>
+                        <div class="border rounded-lg p-4 cursor-pointer hover:bg-purple-50 hover:border-purple-300 transition-colors" onclick="selectCommunicationStyle('brief')">
+                            <div class="flex items-center gap-2 mb-2">
+                                <input type="radio" name="communication-style" value="brief" class="text-purple-600">
+                                <h4 class="font-medium">Краткий</h4>
+                            </div>
+                            <p class="text-sm text-gray-600">Лаконичные и четкие ответы для быстрого решения задач</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Настройки уведомлений -->
+            <div class="bg-white border rounded-lg">
+                <div class="p-4 border-b">
+                    <h3 class="font-semibold">Уведомления</h3>
+                </div>
+                <div class="p-6 space-y-6">
+                    <div>
+                        <h4 class="font-medium mb-3">Условия срабатывания</h4>
+                        <div class="space-y-3">
+                            <label class="flex items-center gap-3">
+                                <input type="checkbox" class="rounded" checked>
+                                <span class="text-sm">Новые горячие лиды</span>
+                            </label>
+                            <label class="flex items-center gap-3">
+                                <input type="checkbox" class="rounded" checked>
+                                <span class="text-sm">Требуется одобрение предложения</span>
+                            </label>
+                            <label class="flex items-center gap-3">
+                                <input type="checkbox" class="rounded">
+                                <span class="text-sm">Просроченные задачи</span>
+                            </label>
+                            <label class="flex items-center gap-3">
+                                <input type="checkbox" class="rounded">
+                                <span class="text-sm">Важные обновления сделок</span>
+                            </label>
+                        </div>
+                    </div>
+                    <div>
+                        <h4 class="font-medium mb-3">Способы получения уведомлений</h4>
+                        <div class="grid gap-3 md:grid-cols-2">
+                            <label class="flex items-center gap-3">
+                                <input type="checkbox" class="rounded" checked>
+                                <span class="text-sm">В приложении</span>
+                            </label>
+                            <label class="flex items-center gap-3">
+                                <input type="checkbox" class="rounded">
+                                <span class="text-sm">Email</span>
+                            </label>
+                            <label class="flex items-center gap-3">
+                                <input type="checkbox" class="rounded">
+                                <span class="text-sm">SMS</span>
+                            </label>
+                            <label class="flex items-center gap-3">
+                                <input type="checkbox" class="rounded">
+                                <span class="text-sm">Push-уведомления</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Интеграции -->
+            <div class="bg-white border rounded-lg">
+                <div class="p-4 border-b">
+                    <h3 class="font-semibold">Интеграции</h3>
+                </div>
+                <div class="p-6">
+                    <div class="grid gap-4 md:grid-cols-2">
+                        <div class="border rounded-lg p-4">
+                            <div class="flex items-center justify-between mb-3">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center">
+                                        <svg class="w-4 h-4 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
+                                            <path d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zM4 7h12v9H4V7z"/>
+                                        </svg>
+                                    </div>
+                                    <div>
+                                        <h4 class="font-medium">Календарь</h4>
+                                        <p class="text-sm text-gray-600">Google Calendar</p>
+                                    </div>
+                                </div>
+                                <button class="text-sm bg-green-100 text-green-800 px-3 py-1 rounded-full">Подключено</button>
+                            </div>
+                            <p class="text-xs text-gray-500">Синхронизация встреч и напоминаний</p>
+                        </div>
+
+                        <div class="border rounded-lg p-4">
+                            <div class="flex items-center justify-between mb-3">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center">
+                                        <svg class="w-4 h-4 text-green-600" fill="currentColor" viewBox="0 0 20 20">
+                                            <path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z"/>
+                                        </svg>
+                                    </div>
+                                    <div>
+                                        <h4 class="font-medium">WhatsApp</h4>
+                                        <p class="text-sm text-gray-600">Business API</p>
+                                    </div>
+                                </div>
+                                <button class="text-sm bg-gray-100 text-gray-600 px-3 py-1 rounded-full hover:bg-gray-200 transition-colors">Подключить</button>
+                            </div>
+                            <p class="text-xs text-gray-500">Отправка сообщений клиентам</p>
+                        </div>
+
+                        <div class="border rounded-lg p-4">
+                            <div class="flex items-center justify-between mb-3">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-8 h-8 bg-red-100 rounded-lg flex items-center justify-center">
+                                        <svg class="w-4 h-4 text-red-600" fill="currentColor" viewBox="0 0 20 20">
+                                            <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z"/>
+                                            <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z"/>
+                                        </svg>
+                                    </div>
+                                    <div>
+                                        <h4 class="font-medium">Email</h4>
+                                        <p class="text-sm text-gray-600">SMTP/Gmail</p>
+                                    </div>
+                                </div>
+                                <button class="text-sm bg-green-100 text-green-800 px-3 py-1 rounded-full">Подключено</button>
+                            </div>
+                            <p class="text-xs text-gray-500">Автоматические email-кампании</p>
+                        </div>
+
+                        <div class="border rounded-lg p-4">
+                            <div class="flex items-center justify-between mb-3">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-8 h-8 bg-purple-100 rounded-lg flex items-center justify-center">
+                                        <svg class="w-4 h-4 text-purple-600" fill="currentColor" viewBox="0 0 20 20">
+                                            <path d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zM14 9a1 1 0 00-1 1v6a1 1 0 001 1h2a1 1 0 001-1v-6a1 1 0 00-1-1h-2z"/>
+                                        </svg>
+                                    </div>
+                                    <div>
+                                        <h4 class="font-medium">CRM</h4>
+                                        <p class="text-sm text-gray-600">Salesforce/HubSpot</p>
+                                    </div>
+                                </div>
+                                <button class="text-sm bg-gray-100 text-gray-600 px-3 py-1 rounded-full hover:bg-gray-200 transition-colors">Подключить</button>
+                            </div>
+                            <p class="text-xs text-gray-500">Синхронизация контактов и сделок</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Кнопка сохранения -->
+            <div class="flex justify-end">
+                <button onclick="saveAssistantSettings()" class="bg-black text-white py-2 px-6 rounded-md font-medium hover:bg-gray-800 transition-colors">Сохранить изменения</button>
+            </div>
+        </div>
+    `;
+    }
+
+    function saveAssistantSettings() {
+        // Получаем значения из формы
+        const assistantName = document.getElementById('assistant-name')?.value || 'My Assistant';
+        const language = document.getElementById('language')?.value || 'ru';
+        const tone = document.getElementById('tone')?.value || 'professional';
+        const responseSpeed = document.getElementById('response-speed')?.value || 'normal';
+        const emailNotifications = document.getElementById('email-notifications')?.checked || false;
+        const smsNotifications = document.getElementById('sms-notifications')?.checked || false;
+        const whatsappIntegration = document.getElementById('whatsapp-integration')?.checked || false;
+        const telegramIntegration = document.getElementById('telegram-integration')?.checked || false;
+        
+        // Сохраняем настройки (в реальном приложении здесь был бы API вызов)
+        const settings = {
+            assistantName,
+            language,
+            tone,
+            responseSpeed,
+            notifications: {
+                email: emailNotifications,
+                sms: smsNotifications
+            },
+            integrations: {
+                whatsapp: whatsappIntegration,
+                telegram: telegramIntegration
+            },
+            savedAt: new Date().toISOString()
+        };
+        
+        // Сохраняем в localStorage для демонстрации
+        localStorage.setItem('assistantSettings', JSON.stringify(settings));
+        
+        // Показываем уведомление об успешном сохранении
+        const notification = document.createElement('div');
+        notification.className = 'fixed top-4 right-4 bg-green-500 text-white px-4 py-2 rounded-md shadow-lg z-50';
+        notification.textContent = 'Настройки успешно сохранены!';
+        document.body.appendChild(notification);
+        
+        // Убираем уведомление через 3 секунды
+        setTimeout(() => {
+            notification.remove();
+        }, 3000);
+        
+        console.log('Assistant settings saved:', settings);
+    }
+
     function renderDealsPage() { const page = document.getElementById('page-deals'); const statuses = ['New Lead', 'Qualified', 'Offer Sent', 'Negotiation']; const assistantName = state.currentUserRole === 'CEO' ? 'Leonardo' : 'Jessica'; page.innerHTML = `<div class="bg-white border rounded-lg"><div class="p-4 flex justify-between items-center border-b"><h3 class="font-semibold">All Deals</h3><button class="bg-black text-white text-sm py-2 px-4 rounded-md font-medium">Add Deal</button></div><div class="space-y-4 p-4">${statuses.map(status => { const statusDeals = dealsData.filter(d => d.status === status); if (statusDeals.length === 0) return ''; return `<details open><summary class="font-semibold mb-3 cursor-pointer flex items-center justify-between py-2"><span>${status} (${statusDeals.length})</span><span class="transform transition-transform">${ICONS.chevron}</span></summary><div class="collapsible-content"><div class="border rounded-md"><div class="overflow-x-auto"><table class="w-full text-sm text-left"><thead class="text-xs text-gray-700 uppercase bg-gray-50"><tr><th class="px-6 py-3">Deal</th><th class="px-6 py-3">Client</th><th class="px-6 py-3">Amount</th><th class="px-6 py-3">Agent</th><th class="px-6 py-3">Offer</th></tr></thead><tbody>${statusDeals.map((deal, index) => `<tr class="bg-white border-b hover:bg-muted cursor-pointer" onclick="window.location.hash = '#deal-details/${deal.id}'"><td class="px-6 py-4 font-medium align-middle"><div>${deal.title}</div>${index % 2 === 0 ? `<div class="flex items-center gap-1 text-xs text-accent mt-1">${ICONS.bot} ${assistantName}</div>` : ''}</td><td class="px-6 py-4 align-middle">${deal.client}</td><td class="px-6 py-4 align-middle">$${deal.amount.toLocaleString()}</td><td class="px-6 py-4 align-middle">${deal.agent}</td><td class="px-6 py-4 align-middle">${deal.offerUrl ? `<a href="${deal.offerUrl}" class="font-medium text-accent hover:underline">View Offer</a>` : '-'}</td></tr>`).join('')}</tbody></table></div></div></div></details>` }).join('')}</div></div>`; }
     function renderDealDetailsPage(dealId) { const page = document.getElementById('page-deal-details'); const deal = dealsData.find(d => d.id === dealId) || dealsData[0]; const assistantName = state.currentUserRole === 'CEO' ? 'Leonardo' : 'Jessica'; page.innerHTML = `<div><a href="#deals" class="text-sm font-medium mb-4 inline-block">&larr; Back to Deals</a><div class="bg-white border rounded-lg"><div class="p-6"><h2 class="text-2xl font-bold">${deal.title}</h2><p class="text-muted-foreground">Client: ${deal.client} | Agent: ${deal.agent}</p></div><div class="p-6 border-t bg-blue-50/50"><div class="flex items-center gap-3 mb-2"><span class="text-accent">${ICONS.bot}</span><h3 class="font-semibold">Summary from ${assistantName}</h3></div><p class="text-sm text-gray-800">${deal.summary}</p></div><div class="p-6 border-t"><h3 class="font-semibold mb-2">Chat Log with ${assistantName}</h3><div class="h-40 overflow-y-auto bg-muted p-3 rounded-md text-sm space-y-3"><p><b>${assistantName}:</b> Hello ${deal.client}, I'm ${assistantName}, assistant to ${deal.agent}...</p><p class="text-right"><b>${deal.client}:</b> Around $${(deal.amount / 1_000_000).toFixed(1)}M</p><p><b>${assistantName}:</b> Perfect. I have prepared a personalized offer for you...</p></div></div>${deal.feedback ? `<div class="p-6 border-t"><h3 class="font-semibold mb-2">Feedback from Showing</h3><div class="text-sm space-y-2"><div><strong>Liked:</strong> ${deal.feedback.liked}</div><div><strong>Disliked:</strong> ${deal.feedback.disliked}</div><div><strong>Rating:</strong> ${'★'.repeat(deal.feedback.rating)}${'☆'.repeat(5-deal.feedback.rating)}</div><div><strong>AI Next Step:</strong> ${deal.feedback.nextStep}</div></div></div>` : ''}</div></div>`; }
     function renderPropertiesPage() { const page = document.getElementById('page-properties'); page.innerHTML = `<div class="flex justify-between items-center mb-4"><div class="flex gap-2 items-center"><input type="text" placeholder="Search..." class="p-2 border rounded-md w-64"><select class="p-2 border rounded-md"><option>All Types</option></select><div class="flex items-center gap-2 ml-4"><label class="text-sm font-medium">Filter:</label><button class="px-3 py-1 text-sm rounded-full bg-gray-200">My Properties</button><button class="px-3 py-1 text-sm rounded-full">All Properties</button></div></div><button class="bg-black text-white text-sm py-2 px-4 rounded-md font-medium">Add Property</button></div><div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">${propertiesData.map(prop => `<a href="#property-details/${prop.id}" class="bg-white border rounded-lg overflow-hidden group"><div class="relative"><img src="${prop.image}" alt="${prop.name}" class="h-56 w-full object-cover group-hover:scale-105 transition-transform"><div class="absolute top-2 right-2 bg-black/50 text-white text-xs px-2 py-1 rounded-full">${prop.agent}</div></div><div class="p-4"><h4 class="font-semibold">${prop.name}</h4><p class="text-sm text-muted-foreground">${prop.location}</p><div class="flex justify-between items-end mt-4"><div><p class="text-lg font-bold text-accent">$${prop.price.toLocaleString()}</p><p class="text-xs text-muted-foreground">${prop.beds} beds • ${prop.baths} baths • ${prop.area} sqft</p></div></div></div></div>`).join('')}</div>`; }
@@ -258,6 +625,86 @@ document.addEventListener('DOMContentLoaded', () => {
     function renderAgentCharts() { destroyAllCharts(); const pipelineCtx = document.getElementById('agentPipelineChart')?.getContext('2d'); if (pipelineCtx) { chartInstances.pipeline = new Chart(pipelineCtx, { type: 'bar', data: { labels: ['New', 'Qualified', 'Offer', 'Negotiation'], datasets: [{ label: 'My Deals', data: [2, 3, 1, 2], backgroundColor: ['#93c5fd', '#60a5fa', '#3b82f6', '#2563eb'], borderRadius: 4 }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } } }); } }
     function renderCeoCharts() { destroyAllCharts(); const leadsCtx = document.getElementById('ceoLeadsChart')?.getContext('2d'); if (leadsCtx) { chartInstances.leads = new Chart(leadsCtx, { type: 'line', data: { labels: ['W1', 'W2', 'W3', 'W4', 'W5', 'W6', 'W7', 'W8'], datasets: [{ label: 'New Leads', data: [22, 25, 31, 28, 35, 41, 38, 45], borderColor: '#0070f3', tension: 0.3, fill: false }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } } }); } }
     function renderAnalyticsCharts() { destroyAllCharts(); const funnelCtx = document.getElementById('funnelChart')?.getContext('2d'); const agentCtx = document.getElementById('agentChart')?.getContext('2d'); if(funnelCtx) { chartInstances.funnel = new Chart(funnelCtx, { type: 'bar', data: { labels: ['New Leads', 'Qualified', 'Offer Sent', 'Negotiation', 'Closed'], datasets: [{ label: 'Conversion', data: [100, 62, 45, 25, 15], backgroundColor: ['#2563eb', '#3b82f6', '#60a5fa', '#93c5fd', '#bfdbfe'] }] }, options: { indexAxis: 'y', responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } } }); } if(agentCtx) { chartInstances.agent = new Chart(agentCtx, { type: 'pie', data: { labels: ['Alex Ivanov', 'Anna Petrova', 'Other'], datasets: [{ label: 'Deals Closed (MTD)', data: [12, 9, 5], backgroundColor: ['#2563eb', '#60a5fa', '#bfdbfe'], borderColor: '#fff', borderWidth: 4 }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom' } } } }); } }
+
+    function renderAssistantActivityChart() {
+        const activityCtx = document.getElementById('assistantActivityChart')?.getContext('2d');
+        if (activityCtx) {
+            // Данные активности за последние 7 дней
+            const activityData = {
+                labels: ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'],
+                datasets: [
+                    {
+                        label: 'Сообщения отправлены',
+                        data: [45, 52, 38, 67, 59, 23, 31],
+                        borderColor: '#3b82f6',
+                        backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                        tension: 0.4,
+                        fill: true
+                    },
+                    {
+                        label: 'Лиды обработаны',
+                        data: [12, 15, 8, 18, 14, 6, 9],
+                        borderColor: '#10b981',
+                        backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                        tension: 0.4,
+                        fill: true
+                    },
+                    {
+                        label: 'Встречи назначены',
+                        data: [3, 4, 2, 6, 5, 1, 2],
+                        borderColor: '#f59e0b',
+                        backgroundColor: 'rgba(245, 158, 11, 0.1)',
+                        tension: 0.4,
+                        fill: true
+                    }
+                ]
+            };
+            
+            chartInstances.assistantActivity = new Chart(activityCtx, {
+                type: 'line',
+                data: activityData,
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    interaction: {
+                        mode: 'index',
+                        intersect: false,
+                    },
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                            labels: {
+                                usePointStyle: true,
+                                padding: 20
+                            }
+                        },
+                        tooltip: {
+                            backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                            titleColor: 'white',
+                            bodyColor: 'white',
+                            borderColor: 'rgba(255, 255, 255, 0.1)',
+                            borderWidth: 1
+                        }
+                    },
+                    scales: {
+                        x: {
+                            display: true,
+                            grid: {
+                                display: false
+                            }
+                        },
+                        y: {
+                            display: true,
+                            beginAtZero: true,
+                            grid: {
+                                color: 'rgba(0, 0, 0, 0.1)'
+                            }
+                        }
+                    }
+                }
+            });
+        }
+    }
 
     // -----------------------------------------------------------------------------
     // 5. MODAL LOGIC
