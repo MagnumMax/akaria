@@ -1,0 +1,96 @@
+/* Vercel/Geist Inspired Base Styling */
+:root {
+    --background: #ffffff;
+    --foreground: #000000;
+    --muted: #f9fafb;
+    --muted-foreground: #6b7280;
+    --border: #e5e7eb;
+    --accent: #0070f3;
+    --accent-foreground: #ffffff;
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+    background-color: var(--background);
+    color: var(--foreground);
+    -webkit-font-smoothing: antialiased;
+}
+
+/* Custom UI classes */
+.nav-active {
+    background-color: var(--muted);
+    color: var(--foreground);
+    font-weight: 600;
+}
+
+.page-hidden {
+    display: none;
+}
+
+.tab-active {
+    border-bottom-color: var(--foreground);
+    color: var(--foreground);
+    font-weight: 600;
+}
+
+/* Modal State Control */
+[data-state="closed"] {
+    display: none;
+}
+
+[data-state="open"] {
+    display: flex;
+}
+
+/* Collapsible Section */
+.collapsible-content {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease-out;
+}
+
+details[open] .collapsible-content {
+    max-height: 1000px;
+}
+
+details summary::-webkit-details-marker {
+    display: none;
+}
+
+details summary {
+    list-style: none;
+}
+
+/* Modal Styles */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+.modal-content {
+    background: white;
+    border-radius: 8px;
+    padding: 24px;
+    max-width: 500px;
+    width: 90%;
+    max-height: 80vh;
+    overflow-y: auto;
+}
+
+/* Toggle Switch Styles */
+.toggle-checkbox:checked {
+    right: 0;
+    border-color: var(--accent);
+}
+
+.toggle-checkbox:checked + .toggle-label {
+    background-color: var(--accent);
+}
