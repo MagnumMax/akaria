@@ -42,6 +42,12 @@
                 <button id="mobile-menu-btn" class="md:hidden mr-4 p-2 rounded-md hover:bg-muted"><svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg></button>
                 <div class="flex-1"><h1 id="page-title" class="text-xl font-semibold">Dashboard</h1></div>
                 <div class="flex items-center gap-4">
+                    <button id="assistant-chat-btn" class="p-2 rounded-md hover:bg-muted transition-colors" title="Открыть чат с ассистентом">
+                        <svg class="h-5 w-5 text-accent" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+                            <path d="M8 10h.01M12 10h.01M16 10h.01"/>
+                        </svg>
+                    </button>
                     <div class="relative"><button id="user-menu-btn" class="flex items-center gap-2"><img src="https://i.pravatar.cc/150?u=ceo" id="user-avatar" class="h-8 w-8 rounded-full" alt="User Avatar"><div class="hidden md:block text-left"><p id="user-name" class="text-sm font-medium">Elena Petrova</p><p id="user-role-display" class="text-xs text-muted-foreground">CEO</p></div></button></div>
                 </div>
             </header>
@@ -236,127 +242,634 @@ document.addEventListener('DOMContentLoaded', () => {
     function renderAgentDashboard(page) { page.innerHTML = `<div class="bg-white border rounded-lg p-6"><h3 class="font-semibold text-xl mb-4">My Focus Today</h3><div class="border-b"><nav class="-mb-px flex gap-6" id="focus-tabs"><button data-tab="hot-leads" class="focus-tab tab-active py-3 border-b-2">🔥 Hot Leads (3)</button><button data-tab="approvals" class="focus-tab py-3 border-b-2 border-transparent text-muted-foreground">👍 Awaiting Approval (1)</button><button data-tab="tasks" class="focus-tab py-3 border-b-2 border-transparent text-muted-foreground">❗ Urgent Tasks (1)</button></nav></div><div class="pt-6"><div id="tab-hot-leads" class="focus-tab-content space-y-3">${dealsData.slice(0, 3).map(deal => `<a href="#deal-details/${deal.id}" class="block p-3 border rounded-md hover:bg-muted"><b>${deal.client}:</b> ${deal.summary}</a>`).join('')}</div><div id="tab-approvals" class="focus-tab-content page-hidden space-y-3">${assistantDialogs.filter(d => d.status === 'Approval Needed').map(d => `<div data-offer-id="${d.id}" class="approval-item cursor-pointer p-3 border rounded-md hover:bg-muted"><b>${d.client}:</b> Jessica has prepared a new offer. Click to review and send.</div>`).join('')}</div><div id="tab-tasks" class="focus-tab-content page-hidden space-y-3">${tasksData.filter(t => t.status === 'Overdue').map(t => `<a href="#tasks" class="block p-3 border rounded-md hover:bg-muted"><b>Overdue Task:</b> ${t.title}</a>`).join('')}</div></div></div><div class="grid gap-6 mt-6 grid-cols-1 lg:grid-cols-2"><div class="bg-white border rounded-lg p-4"><h3 class="font-semibold mb-4">My Deal Pipeline</h3><div class="h-64"><canvas id="agentPipelineChart"></canvas></div></div><div class="bg-white border rounded-lg p-4"><h3 class="font-semibold mb-4">My Recent Activity</h3><div class="space-y-3 text-sm"><p><span class="font-semibold">Jessica</span> sent an offer to Elon Musk.</p><p>You closed the deal for <span class="font-semibold">Villa in Palm Jumeirah</span>.</p><p>New task assigned: <span class="font-semibold">Follow up with Jeff Bezos</span>.</p></div></div></div>`; renderAgentCharts(); }
     function renderMyAssistantPage() {
     const page = document.getElementById('page-my-assistant');
+    
+    // Предустановленные вопросы - сокращены для минимализма
+    const presetQuestions = [
+        "🔥 Горячие лиды сегодня",
+        "💼 Активные сделки",
+        "📊 Отчет по конверсии",
+        "🏠 Новые объекты",
+        "📞 Звонки на сегодня",
+        "📈 Анализ рынка"
+    ];
+    
     page.innerHTML = `
-        <div class="space-y-6">
-            <!-- Статистика -->
-            <div class="grid gap-6 md:grid-cols-3">
-                <div class="bg-white border rounded-lg p-4 text-center">
-                    <h3 class="text-sm font-medium text-muted-foreground">Hot Leads Today</h3>
-                    <p class="text-4xl font-bold mt-2">3</p>
-                </div>
-                <div class="bg-white border rounded-lg p-4 text-center">
-                    <h3 class="text-sm font-medium text-muted-foreground">Active Dialogs</h3>
-                    <p class="text-4xl font-bold mt-2">${assistantDialogs.length}</p>
-                </div>
-                <div class="bg-white border rounded-lg p-4 text-center">
-                    <h3 class="text-sm font-medium text-muted-foreground">Conversion Rate (7d)</h3>
-                    <p class="text-4xl font-bold mt-2">62%</p>
-                </div>
-            </div>
+        <div class="max-w-5xl mx-auto px-4 py-6">
 
-            <!-- Кнопка Settings -->
-            <div class="bg-white border rounded-lg p-4">
-                <div class="flex justify-between items-center">
-                    <h3 class="font-semibold">Assistant Settings</h3>
-                    <a href="#my-assistant-settings" class="text-sm font-medium bg-black text-white py-2 px-4 rounded-md hover:bg-gray-800 transition-colors">Settings</a>
-                </div>
-            </div>
-
-            <!-- Аналитика и инсайты -->
-            <div class="bg-white border rounded-lg">
-                <div class="p-4 border-b">
-                    <h3 class="font-semibold">Аналитика и инсайты</h3>
-                </div>
-                <div class="p-4 space-y-6">
-                    <!-- Рекомендации ассистента -->
-                    <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                        <h4 class="font-medium text-blue-900 mb-3">Рекомендации ассистента</h4>
-                        <div class="space-y-2">
-                            <div class="flex items-start gap-3">
-                                <div class="w-2 h-2 bg-blue-500 rounded-full mt-2 flex-shrink-0"></div>
-                                <p class="text-sm text-blue-800">Рекомендуется увеличить частоту follow-up сообщений для горячих лидов на 25%</p>
-                            </div>
-                            <div class="flex items-start gap-3">
-                                <div class="w-2 h-2 bg-blue-500 rounded-full mt-2 flex-shrink-0"></div>
-                                <p class="text-sm text-blue-800">Оптимальное время для контакта с клиентами: 10:00-12:00 и 14:00-16:00</p>
-                            </div>
-                            <div class="flex items-start gap-3">
-                                <div class="w-2 h-2 bg-blue-500 rounded-full mt-2 flex-shrink-0"></div>
-                                <p class="text-sm text-blue-800">Персонализированные сообщения показывают на 40% лучший отклик</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- График активности -->
-                    <div>
-                        <h4 class="font-medium mb-3">График активности взаимодействий</h4>
-                        <div class="bg-gray-50 rounded-lg p-4 h-64 flex items-center justify-center">
-                            <canvas id="assistantActivityChart" width="400" height="200"></canvas>
-                        </div>
-                    </div>
-
-                    <!-- Метрики эффективности -->
-                    <div>
-                        <h4 class="font-medium mb-3">Метрики эффективности</h4>
-                        <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-                            <div class="bg-green-50 border border-green-200 rounded-lg p-3 text-center">
-                                <p class="text-sm text-green-600 font-medium">Решенных задач</p>
-                                <p class="text-2xl font-bold text-green-800 mt-1">47</p>
-                                <p class="text-xs text-green-600 mt-1">за неделю</p>
-                            </div>
-                            <div class="bg-purple-50 border border-purple-200 rounded-lg p-3 text-center">
-                                <p class="text-sm text-purple-600 font-medium">Сэкономлено времени</p>
-                                <p class="text-2xl font-bold text-purple-800 mt-1">12.5ч</p>
-                                <p class="text-xs text-purple-600 mt-1">за неделю</p>
-                            </div>
-                            <div class="bg-orange-50 border border-orange-200 rounded-lg p-3 text-center">
-                                <p class="text-sm text-orange-600 font-medium">Средний отклик</p>
-                                <p class="text-2xl font-bold text-orange-800 mt-1">2.3м</p>
-                                <p class="text-xs text-orange-600 mt-1">время ответа</p>
-                            </div>
-                            <div class="bg-indigo-50 border border-indigo-200 rounded-lg p-3 text-center">
-                                <p class="text-sm text-indigo-600 font-medium">Успешность</p>
-                                <p class="text-2xl font-bold text-indigo-800 mt-1">94%</p>
-                                <p class="text-xs text-indigo-600 mt-1">выполненных задач</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Активные диалоги -->
-            <div class="bg-white border rounded-lg">
-                <div class="p-4 border-b">
-                    <h3 class="font-semibold">Активные диалоги</h3>
-                </div>
-                <div class="p-4 space-y-4">
-                    ${assistantDialogs.map(dialog => `
-                        <div class="p-4 border rounded-md flex items-start gap-4 hover:bg-gray-50 transition-colors">
-                            <div class="w-10 h-10 rounded-full bg-muted flex-shrink-0 flex items-center justify-center">
-                                <span class="font-bold text-sm">${dialog.client.substring(0,2).toUpperCase()}</span>
-                            </div>
-                            <div class="flex-1">
-                                <p class="font-medium">${dialog.client}</p>
-                                <p class="text-sm text-muted-foreground italic">"${dialog.lastMessage}"</p>
-                            </div>
-                            <div class="flex items-center gap-2 text-sm">
-                                <span class="px-2 py-1 rounded-full text-xs font-medium ${
-                                    dialog.status === 'Approval Needed' ? 'bg-yellow-100 text-yellow-800' : 
-                                    dialog.status === 'Ready for Handoff' ? 'bg-green-100 text-green-800' : 
-                                    'bg-gray-100'
-                                }">${dialog.status}</span>
-                            </div>
-                        </div>
+            
+            <!-- Быстрые команды - горизонтальная прокрутка -->
+            <div class="mb-8">
+                <div class="flex gap-3 overflow-x-auto pb-2 scrollbar-hide">
+                    ${presetQuestions.map(question => `
+                        <button class="preset-question quick-command-btn flex-shrink-0 px-4 py-2 bg-white border border-gray-200 rounded-full text-sm font-medium text-gray-700 hover:bg-gray-50 hover:border-gray-300">
+                            ${question}
+                        </button>
                     `).join('')}
+                </div>
+            </div>
+            
+            <!-- Основная область чата - центрированная -->
+            <div class="max-w-4xl mx-auto">
+                
+                <!-- Основная область чата -->
+                <div class="bg-white rounded-2xl shadow-sm border border-gray-100 flex flex-col h-[70vh] min-h-[500px]">
+                    <!-- Статус бар чата -->
+                    <div class="px-6 py-4 border-b border-gray-100">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center gap-3">
+                                <div class="w-3 h-3 bg-green-500 rounded-full status-indicator"></div>
+                                <span class="text-sm font-medium text-gray-900">Ассистент активен</span>
+                            </div>
+                            <div class="text-xs text-gray-500">Среднее время ответа: 1.2с</div>
+                        </div>
+                    </div>
+                    
+                    <!-- Область сообщений -->
+                    <div id="chat-messages" class="flex-1 overflow-y-auto px-6 py-6 space-y-6">
+                        <!-- Приветственное сообщение -->
+                        <div class="flex items-start gap-4">
+                            <div class="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center flex-shrink-0">
+                                <svg class="h-5 w-5 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M12 2L2 7l10 5 10-5-10-5z"/>
+                                    <path d="M2 17l10 5 10-5"/>
+                                    <path d="M2 12l10 5 10-5"/>
+                                </svg>
+                            </div>
+                            <div class="bg-gray-50 rounded-2xl rounded-tl-md p-4 max-w-[85%]">
+                                <p class="text-gray-800 leading-relaxed">Привет! Я ваш персональный AI-ассистент по недвижимости. Готов помочь с анализом лидов, созданием отчетов и поиском информации о клиентах.</p>
+                                <div class="flex items-center gap-3 mt-3 pt-2 border-t border-gray-200">
+                                    <span class="text-xs text-gray-500">Сейчас</span>
+                                    <button class="copy-message text-xs text-blue-600 hover:text-blue-700 font-medium transition-colors">Копировать</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Форма ввода -->
+                    <div class="px-6 py-4 border-t border-gray-100">
+                        <form id="chat-form" class="flex gap-3">
+                            <div class="flex-1 relative">
+                                <input 
+                                    type="text" 
+                                    id="chat-input" 
+                                    placeholder="Задайте вопрос ассистенту..." 
+                                    class="w-full px-4 py-3 pr-12 bg-gray-50 border-0 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all duration-200 text-gray-900 placeholder-gray-500"
+                                    autocomplete="off"
+                                >
+                                <button 
+                                    type="button" 
+                                    id="search-btn"
+                                    class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
+                                    title="Поиск в истории"
+                                >
+                                    <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <circle cx="11" cy="11" r="8"/>
+                                        <path d="m21 21-4.35-4.35"/>
+                                    </svg>
+                                </button>
+                            </div>
+                            <button 
+                                type="submit" 
+                                class="btn-primary bg-blue-600 text-white px-6 py-3 rounded-xl hover:bg-blue-700 flex items-center gap-2 font-medium shadow-sm"
+                            >
+                                <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <line x1="22" y1="2" x2="11" y2="13"/>
+                                    <polygon points="22,2 15,22 11,13 2,9"/>
+                                </svg>
+                                <span class="hidden sm:inline">Отправить</span>
+                            </button>
+                        </form>
+                    </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Статистика и настройки - компактный блок -->
+            <div class="mt-8 grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Статистика -->
+                <div class="stat-card bg-white rounded-xl border border-gray-100 p-6">
+                    <h3 class="font-medium text-gray-900 mb-4">Статистика сегодня</h3>
+                    <div class="grid grid-cols-3 gap-4">
+                        <div class="text-center">
+                            <div class="text-2xl font-bold text-blue-600">12</div>
+                            <div class="text-xs text-gray-500">Запросов</div>
+                        </div>
+                        <div class="text-center">
+                            <div class="text-2xl font-bold text-green-600">1.2с</div>
+                            <div class="text-xs text-gray-500">Ответ</div>
+                        </div>
+                        <div class="text-center">
+                            <div class="text-2xl font-bold text-purple-600">8</div>
+                            <div class="text-xs text-gray-500">Решено</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Настройки -->
+                <div class="stat-card bg-white rounded-xl border border-gray-100 p-6">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <h3 class="font-medium text-gray-900">Настройки</h3>
+                            <p class="text-sm text-gray-500 mt-1">Персонализация ассистента</p>
+                        </div>
+                        <a href="#my-assistant-settings" class="bg-gray-900 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-800 transition-colors">
+                            Настроить
+                        </a>
+                    </div>
                 </div>
             </div>
         </div>
     `;
     
-    // Инициализируем график активности после рендеринга
+    // Инициализация обработчиков событий
+    initializeChatHandlers();
+    
+    // Загружаем историю диалогов при открытии страницы
+    updateChatHistoryDisplay();
+}
+
+// Функция инициализации обработчиков чата
+function initializeChatHandlers() {
+    const chatForm = document.getElementById('chat-form');
+    const chatInput = document.getElementById('chat-input');
+    const chatMessages = document.getElementById('chat-messages');
+    const presetButtons = document.querySelectorAll('.preset-question');
+    
+    // Обработчик отправки формы
+    if (chatForm) {
+        chatForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const message = chatInput.value.trim();
+            if (message) {
+                addUserMessage(message);
+                chatInput.value = '';
+                // Симуляция ответа ассистента
+                setTimeout(() => {
+                    addAssistantMessage(generateAssistantResponse(message));
+                }, 1000);
+            }
+        });
+    }
+    
+    // Обработчики предустановленных вопросов
+    presetButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            const question = this.textContent.trim();
+            chatInput.value = question;
+            chatInput.focus();
+        });
+    });
+    
+    // Обработчики копирования сообщений
+    document.addEventListener('click', function(e) {
+        if (e.target.classList.contains('copy-message')) {
+            const messageText = e.target.closest('.bg-muted').querySelector('p').textContent;
+            navigator.clipboard.writeText(messageText).then(() => {
+                e.target.textContent = 'Скопировано!';
+                setTimeout(() => {
+                    e.target.textContent = 'Копировать';
+                }, 2000);
+            });
+        }
+    });
+}
+
+// Функция добавления сообщения пользователя
+function addUserMessage(message) {
+    const chatMessages = document.getElementById('chat-messages');
+    
+    // Добавляем разделитель если есть предыдущие сообщения
+    if (chatMessages.children.length > 0) {
+        const separator = document.createElement('div');
+        separator.className = 'message-separator';
+        chatMessages.appendChild(separator);
+    }
+    
+    const messageDiv = document.createElement('div');
+    messageDiv.className = 'message flex items-start gap-3 justify-end';
+    messageDiv.innerHTML = `
+        <div class="user-message text-white rounded-lg p-3 max-w-[80%]">
+            <p class="text-sm">${message}</p>
+            <div class="flex items-center gap-2 mt-2 justify-end">
+                <span class="chat-timestamp">Сейчас</span>
+            </div>
+        </div>
+        <div class="user-avatar w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0">
+            <span class="text-xs font-bold">${state.currentUserRole.substring(0,2)}</span>
+        </div>
+    `;
+    chatMessages.appendChild(messageDiv);
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+    
+    // Сохраняем сообщение в историю
+    saveChatMessage(message, 'user');
+}
+
+// Функция добавления ответа ассистента
+function addAssistantMessage(message) {
+    const chatMessages = document.getElementById('chat-messages');
+    
+    // Добавляем разделитель если есть предыдущие сообщения
+    if (chatMessages.children.length > 0) {
+        const separator = document.createElement('div');
+        separator.className = 'message-separator';
+        chatMessages.appendChild(separator);
+    }
+    
+    const messageDiv = document.createElement('div');
+    messageDiv.className = 'message flex items-start gap-3';
+    messageDiv.innerHTML = `
+        <div class="assistant-avatar w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0">
+            <svg class="h-4 w-4 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M12 8V4H8"/>
+                <rect x="4" y="4" width="16" height="16" rx="2"/>
+            </svg>
+        </div>
+        <div class="assistant-message rounded-lg p-3 max-w-[80%]">
+            <p class="text-sm">${message}</p>
+            <div class="flex items-center gap-2 mt-2">
+                <span class="chat-timestamp">Сейчас</span>
+                <button class="copy-message text-xs text-accent hover:underline">Копировать</button>
+            </div>
+        </div>
+    `;
+    chatMessages.appendChild(messageDiv);
+    
+    // Сохраняем сообщение в историю
+    saveChatMessage(message, 'assistant');
+    
+    // Сохраняем диалог в историю после получения ответа ассистента
+    saveDialogToHistory();
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+}
+
+// Функция генерации ответа ассистента (симуляция)
+function generateAssistantResponse(userMessage) {
+    const responses = {
+        'горячие лиды': '🔥 **Найдено 3 горячих лида на сегодня:**\n\n1. **Elon Musk** - Интерес к пентхаусу в центре, бюджет $2M\n2. **Jeff Bezos** - Ищет виллу у моря, бюджет $5M\n3. **Bill Gates** - Коммерческая недвижимость, бюджет $10M\n\n✅ Все лиды активны и ожидают контакта в течение дня.',
+        'сделки': '💼 **У вас 5 активных сделок, требующих внимания:**\n\n• **Villa Paradise** - ожидает подписания (Elon Musk)\n• **Downtown Penthouse** - на стадии переговоров\n• **Seaside Resort** - требует уточнения деталей\n\n💰 Общая сумма сделок: $12.5M',
+        'конверсия': '📊 **Отчет по конверсии за неделю:**\n\n📈 **Общая конверсия**: 4.8%\n🚀 **Рост**: +0.3% к прошлой неделе\n🎯 **Лучший день**: Вторник (6.2%)\n📞 **Источник**: Холодные звонки показали лучший результат',
+        'бюджет': '💰 **Клиенты с бюджетом выше $500K:**\n\n💎 **Elon Musk** - $2M (активен)\n💎 **Jeff Bezos** - $5M (горячий лид)\n💎 **Bill Gates** - $10M (переговоры)\n💎 **Warren Buffett** - $1.5M (рассматривает)\n\n📊 Всего: 4 клиента, общий потенциал $18.5M',
+        'агенты': '👥 **Статистика по агентам:**\n\n🥇 **Jessica Smith**: 8 активных диалогов, конверсия 6.2%\n🥈 **Michael Johnson**: 12 лидов, конверсия 4.1%\n🥉 **Sarah Davis**: 6 сделок в работе, конверсия 5.8%\n\n🏆 Лидер недели: Jessica Smith',
+        'задачи': '⏰ **Просроченные задачи:**\n\n🔴 **Звонок Jeff Bezos** - просрочено на 2 дня\n🔴 **Подготовка договора Villa Paradise** - просрочено на 1 день\n🟡 **Встреча с Bill Gates** - сегодня в 15:00\n\n⚡ Рекомендую срочно обработать эти задачи.',
+        'объекты': '🏠 **Новые объекты недвижимости:**\n\n🆕 **Luxury Villa**, Palm Jumeirah - $3.2M\n🆕 **Penthouse**, Downtown Dubai - $2.8M\n🆕 **Townhouse**, Arabian Ranches - $1.5M\n🆕 **Office Space**, DIFC - $4.1M\n\n📅 Все объекты добавлены за последние 24 часа',
+        'звонки': '📞 **Список звонков на сегодня:**\n\n🔥 **14:00** - Elon Musk (горячий лид)\n📋 **15:30** - Sarah Connor (уточнить детали)\n💼 **16:00** - Warren Buffett (новое предложение)\n📊 **17:00** - Bill Gates (финальные переговоры)\n\n⏰ Следующий звонок через 2 часа',
+        'анализ': '📈 **Анализ рынка недвижимости:**\n\n📊 Средняя цена: $1.8M (+5% за месяц)\n🏠 Самый популярный тип: Виллы (40%)\n📍 Топ-район: Palm Jumeirah\n⏱️ Среднее время продажи: 45 дней\n\n🎯 **Рекомендация**: фокус на премиум-сегменте',
+        'перспективные': '🎯 **Топ-5 перспективных клиентов:**\n\n1. 💎 **Elon Musk** - $2.5M (вероятность 85%)\n2. 💎 **Jeff Bezos** - $1.8M (вероятность 70%)\n3. 💎 **Bill Gates** - $3.2M (вероятность 60%)\n4. 💰 **Warren Buffett** - $900K (вероятность 55%)\n5. 💰 **Tim Cook** - $1.2M (вероятность 45%)\n\n🚀 **Общий потенциал**: $9.6M',
+        'план': '📋 **План работы на завтра:**\n\n🌅 **09:00** - Звонок Elon Musk\n📊 **10:30** - Подготовка отчета по продажам\n🏠 **12:00** - Показ объекта Jeff Bezos\n📞 **14:00** - Обзвон новых лидов\n📝 **16:00** - Обновление CRM\n\n✅ 5 задач запланировано',
+        'презентация': '💬 **Подготовка презентации для клиента:**\n\n📋 Выберите тип презентации:\n• 🏠 Объект недвижимости\n• 💰 Инвестиционное предложение\n• 📊 Аналитический отчет\n• 🎯 Персональное предложение\n\n⚡ Презентация будет готова за 15 минут'
+    };
+    
+    const lowerMessage = userMessage.toLowerCase();
+    
+    for (const [key, response] of Object.entries(responses)) {
+        if (lowerMessage.includes(key)) {
+            return response;
+        }
+    }
+    
+    return 'Понял ваш запрос. Анализирую данные... 🤔\n\nК сожалению, я не нашел точного соответствия в базе данных. Попробуйте переформулировать вопрос или воспользуйтесь быстрыми командами слева.';
+}
+
+// Инициализация обработчиков событий для чата
+function initChatHandlers() {
+    const chatForm = document.getElementById('chatForm');
+    const chatInput = document.getElementById('chatInput');
+    const sendButton = document.getElementById('sendButton');
+    const presetQuestions = document.querySelectorAll('.preset-question');
+    
+    if (chatForm) {
+        chatForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const message = chatInput.value.trim();
+            if (message) {
+                addMessage(message, 'user');
+                chatInput.value = '';
+                
+                // Симуляция ответа ассистента
+                setTimeout(() => {
+                    const response = generateAssistantResponse(message);
+                    addMessage(response, 'assistant');
+                }, 1000);
+            }
+        });
+    }
+    
+    // Обработчики для предустановленных вопросов
+    presetQuestions.forEach(button => {
+        button.addEventListener('click', function() {
+            const command = this.textContent.trim();
+            addMessage(command, 'user');
+            
+            // Визуальная обратная связь
+            this.style.backgroundColor = '#e5e7eb';
+            setTimeout(() => {
+                this.style.backgroundColor = '';
+            }, 200);
+            
+            setTimeout(() => {
+                const response = generateAssistantResponse(command);
+                addMessage(response, 'assistant');
+            }, 1000);
+        });
+    });
+    
+    // Автофокус на поле ввода
+    if (chatInput) {
+        chatInput.focus();
+    }
+}
+
+// Добавление сообщения в чат
+function addMessage(message, sender) {
+    const messagesContainer = document.getElementById('chatMessages');
+    if (!messagesContainer) return;
+    
+    const messageDiv = document.createElement('div');
+    messageDiv.className = `flex gap-3 ${sender === 'user' ? 'justify-end' : 'justify-start'}`;
+    
+    const isUser = sender === 'user';
+    const messageId = 'msg_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+    
+    messageDiv.innerHTML = `
+        <div class="max-w-xs lg:max-w-md px-4 py-2 rounded-lg relative group ${
+            isUser 
+                ? 'bg-blue-500 text-white' 
+                : 'bg-gray-100 text-gray-800'
+        }">
+            <div class="flex items-start justify-between">
+                <div class="flex-1">
+                    <p class="text-sm whitespace-pre-wrap" id="${messageId}">${message}</p>
+                    <p class="text-xs mt-1 opacity-70">${new Date().toLocaleTimeString('ru-RU', {hour: '2-digit', minute: '2-digit'})}</p>
+                </div>
+                ${!isUser ? `
+                    <button onclick="copyMessage('${messageId}')" 
+                            class="ml-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 p-1 rounded hover:bg-gray-200 flex-shrink-0"
+                            title="Копировать сообщение">
+                        <svg class="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
+                        </svg>
+                    </button>
+                ` : ''}
+            </div>
+        </div>
+    `;
+    
+    messagesContainer.appendChild(messageDiv);
+    messagesContainer.scrollTop = messagesContainer.scrollHeight;
+}
+
+// Функция для копирования сообщения
+function copyMessage(messageId) {
+    const messageElement = document.getElementById(messageId);
+    if (!messageElement) return;
+    
+    const text = messageElement.textContent;
+    
+    // Используем современный API Clipboard
+    if (navigator.clipboard && window.isSecureContext) {
+        navigator.clipboard.writeText(text).then(() => {
+            showCopyNotification();
+        }).catch(err => {
+            console.error('Ошибка копирования:', err);
+            fallbackCopyTextToClipboard(text);
+        });
+    } else {
+        fallbackCopyTextToClipboard(text);
+    }
+}
+
+// Резервный метод копирования для старых браузеров
+function fallbackCopyTextToClipboard(text) {
+    const textArea = document.createElement('textarea');
+    textArea.value = text;
+    textArea.style.position = 'fixed';
+    textArea.style.left = '-999999px';
+    textArea.style.top = '-999999px';
+    document.body.appendChild(textArea);
+    textArea.focus();
+    textArea.select();
+    
+    try {
+        document.execCommand('copy');
+        showCopyNotification();
+    } catch (err) {
+        console.error('Ошибка копирования:', err);
+    }
+    
+    document.body.removeChild(textArea);
+}
+
+// Показать уведомление о копировании
+function showCopyNotification() {
+    // Создаем временное уведомление
+    const notification = document.createElement('div');
+    notification.className = 'fixed top-4 right-4 bg-green-500 text-white px-4 py-2 rounded-lg shadow-lg z-50 transition-all duration-300';
+    notification.textContent = '✅ Сообщение скопировано!';
+    
+    document.body.appendChild(notification);
+    
+    // Удаляем уведомление через 2 секунды
     setTimeout(() => {
-        renderAssistantActivityChart();
-    }, 100);
+        notification.style.opacity = '0';
+        notification.style.transform = 'translateY(-20px)';
+        setTimeout(() => {
+            document.body.removeChild(notification);
+        }, 300);
+    }, 2000);
+}
+
+// Переменная для хранения текущего диалога
+let currentDialog = {
+    messages: [],
+    startTime: null,
+    userQuestion: '',
+    assistantResponse: ''
+};
+
+// Функция сохранения сообщения в текущий диалог
+function saveChatMessage(message, sender) {
+    if (!currentDialog.startTime) {
+        currentDialog.startTime = new Date();
+    }
+    
+    currentDialog.messages.push({
+        text: message,
+        sender: sender,
+        timestamp: new Date()
+    });
+    
+    if (sender === 'user') {
+        currentDialog.userQuestion = message;
+    } else if (sender === 'assistant') {
+        currentDialog.assistantResponse = message;
+    }
+}
+
+// Функция сохранения диалога в историю
+function saveDialogToHistory() {
+    if (currentDialog.messages.length >= 2) {
+        const dialogHistory = getChatHistory();
+        
+        const dialogSummary = {
+            id: Date.now() + '_' + Math.random().toString(36).substr(2, 9),
+            title: generateDialogTitle(currentDialog.userQuestion),
+            userQuestion: currentDialog.userQuestion,
+            assistantResponse: currentDialog.assistantResponse,
+            timestamp: currentDialog.startTime,
+            messages: [...currentDialog.messages]
+        };
+        
+        dialogHistory.unshift(dialogSummary);
+        
+        // Ограничиваем историю 50 диалогами
+        if (dialogHistory.length > 50) {
+            dialogHistory.splice(50);
+        }
+        
+        localStorage.setItem('chatHistory', JSON.stringify(dialogHistory));
+        
+        // Обновляем отображение истории
+        updateChatHistoryDisplay();
+        
+        // Сбрасываем текущий диалог
+        currentDialog = {
+            messages: [],
+            startTime: null,
+            userQuestion: '',
+            assistantResponse: ''
+        };
+    }
+}
+
+// Функция получения истории диалогов
+function getChatHistory() {
+    try {
+        const history = localStorage.getItem('chatHistory');
+        return history ? JSON.parse(history) : [];
+    } catch (error) {
+        console.error('Ошибка при загрузке истории:', error);
+        return [];
+    }
+}
+
+// Функция генерации заголовка диалога
+function generateDialogTitle(userQuestion) {
+    const question = userQuestion.toLowerCase();
+    
+    if (question.includes('лид') || question.includes('горяч')) {
+        return 'Анализ горячих лидов';
+    } else if (question.includes('сделк') || question.includes('deal')) {
+        return 'Информация о сделках';
+    } else if (question.includes('конверс') || question.includes('conversion')) {
+        return 'Отчет по конверсии';
+    } else if (question.includes('бюджет') || question.includes('budget')) {
+        return 'Анализ бюджета';
+    } else if (question.includes('агент') || question.includes('команд')) {
+        return 'Информация о команде';
+    } else if (question.includes('задач') || question.includes('task')) {
+        return 'Управление задачами';
+    } else if (question.includes('объект') || question.includes('недвижим')) {
+        return 'Каталог объектов';
+    } else if (question.includes('звонок') || question.includes('call')) {
+        return 'Анализ звонков';
+    } else if (question.includes('анализ') || question.includes('отчет')) {
+        return 'Аналитический отчет';
+    } else {
+        return userQuestion.length > 30 ? userQuestion.substring(0, 30) + '...' : userQuestion;
+    }
+}
+
+// Функция обновления отображения истории
+function updateChatHistoryDisplay() {
+    const historyContainer = document.getElementById('chat-history');
+    if (!historyContainer) return;
+    
+    const history = getChatHistory();
+    
+    if (history.length === 0) {
+        historyContainer.innerHTML = '<p class="text-sm text-muted-foreground text-center py-4">История диалогов пуста</p>';
+        return;
+    }
+    
+    historyContainer.innerHTML = history.map(dialog => {
+        const timeAgo = getTimeAgo(dialog.timestamp);
+        return `
+            <div class="p-3 border rounded-md hover:bg-muted cursor-pointer" onclick="loadDialog('${dialog.id}')">
+                <div class="flex justify-between items-start mb-1">
+                    <span class="font-medium text-sm">${dialog.title}</span>
+                    <span class="text-xs text-muted-foreground">${timeAgo}</span>
+                </div>
+                <p class="text-sm text-muted-foreground mb-1">Вы: "${dialog.userQuestion.length > 50 ? dialog.userQuestion.substring(0, 50) + '...' : dialog.userQuestion}"</p>
+                <p class="text-sm text-muted-foreground">Ассистент: "${dialog.assistantResponse.length > 50 ? dialog.assistantResponse.substring(0, 50) + '...' : dialog.assistantResponse}"</p>
+            </div>
+        `;
+    }).join('');
+}
+
+// Функция получения времени "назад"
+function getTimeAgo(timestamp) {
+    const now = new Date();
+    const dialogTime = new Date(timestamp);
+    const diffMs = now - dialogTime;
+    const diffMins = Math.floor(diffMs / 60000);
+    const diffHours = Math.floor(diffMs / 3600000);
+    const diffDays = Math.floor(diffMs / 86400000);
+    
+    if (diffMins < 1) {
+        return 'Только что';
+    } else if (diffMins < 60) {
+        return `${diffMins} мин назад`;
+    } else if (diffHours < 24) {
+        return `${diffHours} ч назад`;
+    } else if (diffDays === 1) {
+        return 'Вчера';
+    } else if (diffDays < 7) {
+        return `${diffDays} дн назад`;
+    } else {
+        return dialogTime.toLocaleDateString('ru-RU');
+    }
+}
+
+// Функция загрузки диалога в чат
+function loadDialog(dialogId) {
+    const history = getChatHistory();
+    const dialog = history.find(d => d.id === dialogId);
+    
+    if (!dialog) return;
+    
+    // Очищаем текущий чат
+    const chatMessages = document.getElementById('chat-messages');
+    if (chatMessages) {
+        chatMessages.innerHTML = '';
+    }
+    
+    // Загружаем сообщения из диалога
+    dialog.messages.forEach(msg => {
+        if (msg.sender === 'user') {
+            addMessage(msg.text, 'user');
+        } else {
+            addMessage(msg.text, 'assistant');
+        }
+    });
+}
+
+// Функция очистки истории
+function clearChatHistory() {
+    if (confirm('Вы уверены, что хотите очистить всю историю диалогов?')) {
+        localStorage.removeItem('chatHistory');
+        updateChatHistoryDisplay();
+        
+        // Показываем уведомление
+        const notification = document.createElement('div');
+        notification.className = 'fixed top-4 right-4 bg-red-500 text-white px-4 py-2 rounded-lg shadow-lg z-50';
+        notification.textContent = '🗑️ История очищена';
+        document.body.appendChild(notification);
+        
+        setTimeout(() => {
+            document.body.removeChild(notification);
+        }, 2000);
+    }
 }
     function renderMyAssistantSettingsPage() {
     const page = document.getElementById('page-my-assistant-settings');
@@ -845,6 +1358,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
     document.getElementById('role-switcher').addEventListener('click', (e) => { if (e.target.closest('.role-btn')) { state.currentUserRole = e.target.closest('.role-btn').dataset.role; window.location.hash = '#dashboard'; updateUserUI(); } });
     document.getElementById('sidebar-nav-links').addEventListener('click', (e) => { const link = e.target.closest('a'); if (link) { e.preventDefault(); window.location.hash = link.getAttribute('href'); } });
+    
+    // Обработчик для кнопки чата в топ-баре
+    const assistantChatBtn = document.getElementById('assistant-chat-btn');
+    if (assistantChatBtn) {
+        assistantChatBtn.addEventListener('click', function() {
+            window.location.hash = '#my-assistant';
+        });
+    }
     
     document.getElementById('page-content-wrapper').addEventListener('click', e => {
         const link = e.target.closest('a');
