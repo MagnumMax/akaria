@@ -1,4 +1,4 @@
-export const tasksData = [
+window.tasksData = [
     {
         id: 1,
         title: 'Follow up with John Doe',

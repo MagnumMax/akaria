@@ -1,4 +1,4 @@
-export const dealsData = [
+window.dealsData = [
     {
         id: 1,
         title: 'Villa in Palm Jumeirah',

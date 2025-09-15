@@ -1,4 +1,4 @@
-export const propertiesData = [
+window.propertiesData = [
     {
         id: 1,
         name: 'Luxury Villa with Sea View',

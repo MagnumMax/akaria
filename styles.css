@@ -28,6 +28,35 @@ body {
     font-weight: 600;
 }
 
+/* Background and foreground utility classes */
+.bg-background {
+    background-color: var(--background);
+}
+
+.bg-muted {
+    background-color: var(--muted);
+}
+
+.text-muted-foreground {
+    color: var(--muted-foreground);
+}
+
+.text-primary {
+    color: var(--text-primary);
+}
+
+.border-input {
+    border-color: var(--border);
+}
+
+.bg-primary\/10 {
+    background-color: rgba(37, 99, 235, 0.1);
+}
+
+.text-primary {
+    color: var(--accent);
+}
+
 .page-hidden {
     display: none;
 }

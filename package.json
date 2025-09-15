@@ -1,0 +1,21 @@
+{
+  "name": "akaria",
+  "version": "1.0.0",
+  "description": "CRM система для управления контактами",
+  "main": "index.html",
+  "scripts": {
+    "dev": "npx serve . -p 3000",
+    "lint": "eslint . --ext .js,.ts --fix",
+    "lint:check": "eslint . --ext .js,.ts",
+    "type-check": "tsc --noEmit",
+    "vercel-build": "echo 'Build completed successfully'",
+    "build": "echo 'Build completed successfully'"
+  },
+  "devDependencies": {
+    "eslint": "^8.57.0",
+    "typescript": "^5.0.0"
+  },
+  "keywords": ["crm", "contacts", "javascript"],
+  "author": "Maksym Holovakhin",
+  "license": "MIT"
+}

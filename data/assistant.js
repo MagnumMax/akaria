@@ -1,4 +1,4 @@
-export const assistantDialogs = [
+window.assistantDialogs = [
     {
         id: 1,
         client: 'Mark Zuckerberg',
