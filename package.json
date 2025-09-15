@@ -8,8 +8,8 @@
     "lint": "eslint . --ext .js,.ts --fix",
     "lint:check": "eslint . --ext .js,.ts",
     "type-check": "tsc --noEmit",
-    "vercel-build": "echo 'Build completed successfully'",
-    "build": "echo 'Build completed successfully'"
+    "vercel-build": "rm -rf public/* && cp index.html styles.css *.js public/ && cp -r data/ components/ public/ && echo 'Build completed successfully'",
+    "build": "rm -rf public/* && cp index.html styles.css *.js public/ && cp -r data/ components/ public/ && echo 'Build completed successfully'"
   },
   "devDependencies": {
     "eslint": "^8.57.0",
