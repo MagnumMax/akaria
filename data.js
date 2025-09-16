@@ -244,7 +244,7 @@ const navLinks = {
     CEO: [
         { id: 'dashboard', name: 'Dashboard', icon: ICONS.dashboard },
         { id: 'deals', name: 'Deals', icon: ICONS.deals },
-        { id: 'contacts', name: 'Contacts', icon: ICONS.contacts },
+        { id: 'leads', name: 'Leads', icon: ICONS.contacts },
         { id: 'properties', name: 'Properties', icon: ICONS.properties },
         { id: 'tasks', name: 'Tasks', icon: ICONS.tasks },
         { id: 'analytics', name: 'Analytics', icon: ICONS.analytics },
@@ -255,7 +255,7 @@ const navLinks = {
         { id: 'dashboard', name: 'Dashboard', icon: ICONS.dashboard },
         { id: 'tasks', name: 'My Tasks', icon: ICONS.tasks },
         { id: 'deals', name: 'My Deals', icon: ICONS.deals },
-        { id: 'contacts', name: 'Contacts', icon: ICONS.contacts },
+        { id: 'leads', name: 'Leads', icon: ICONS.contacts },
         { id: 'properties', name: 'Properties', icon: ICONS.properties },
         { type: 'divider' },
         { id: 'my-assistant', name: 'My Assistant', icon: ICONS.assistant }
@@ -263,7 +263,7 @@ const navLinks = {
     Admin: [
         { id: 'dashboard', name: 'Dashboard', icon: ICONS.dashboard },
         { id: 'imports', name: 'Imports', icon: ICONS.imports },
-        { id: 'contacts', name: 'Manage Contacts', icon: ICONS.contacts },
+        { id: 'leads', name: 'Manage Leads', icon: ICONS.contacts },
         { id: 'properties', name: 'Manage Properties', icon: ICONS.properties },
         { id: 'settings', name: 'Settings', icon: ICONS.settings }
     ]

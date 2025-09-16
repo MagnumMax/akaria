@@ -98,7 +98,7 @@
                     <section id="page-imports" class="page-hidden"></section>
                     <section id="page-my-assistant" class="page-hidden"></section>
                     <section id="page-my-assistant-settings" class="page-hidden"></section>
-        <section id="page-contacts" class="page-hidden"></section>
+        <section id="page-leads" class="page-hidden"></section>
                 </div>
             </main>
         </div>
@@ -176,9 +176,9 @@ document.addEventListener('DOMContentLoaded', () => {
     // -----------------------------------------------------------------------------
     
     const navLinks = {
-        CEO: [ { id: 'dashboard', name: 'Dashboard', icon: ICONS.dashboard }, { id: 'contacts', name: 'Contacts', icon: ICONS.contacts }, { id: 'deals', name: 'Deals', icon: ICONS.deals }, { id: 'properties', name: 'Properties', icon: ICONS.properties }, { id: 'tasks', name: 'Tasks', icon: ICONS.tasks }, { id: 'analytics', name: 'Analytics', icon: ICONS.analytics }, { id: 'settings', name: 'Settings', icon: ICONS.settings }, { type: 'divider' }, { id: 'my-assistant', name: 'My Assistant', icon: ICONS.assistant }],
-        Agent: [ { id: 'dashboard', name: 'Dashboard', icon: ICONS.dashboard }, { id: 'contacts', name: 'Contacts', icon: ICONS.contacts }, { id: 'tasks', name: 'My Tasks', icon: ICONS.tasks }, { id: 'deals', name: 'My Deals', icon: ICONS.deals }, { id: 'properties', name: 'Properties', icon: ICONS.properties }, { type: 'divider' }, { id: 'my-assistant', name: 'My Assistant', icon: ICONS.assistant }],
-        Admin: [ { id: 'dashboard', name: 'Dashboard', icon: ICONS.dashboard }, { id: 'contacts', name: 'Contacts', icon: ICONS.contacts }, { id: 'imports', name: 'Imports', icon: ICONS.imports }, { id: 'properties', name: 'Manage Properties', icon: ICONS.properties }, { id: 'settings', name: 'Settings', icon: ICONS.settings }]
+        CEO: [ { id: 'dashboard', name: 'Dashboard', icon: ICONS.dashboard }, { id: 'leads', name: 'Leads', icon: ICONS.contacts }, { id: 'deals', name: 'Deals', icon: ICONS.deals }, { id: 'properties', name: 'Properties', icon: ICONS.properties }, { id: 'tasks', name: 'Tasks', icon: ICONS.tasks }, { id: 'analytics', name: 'Analytics', icon: ICONS.analytics }, { id: 'settings', name: 'Settings', icon: ICONS.settings }, { type: 'divider' }, { id: 'my-assistant', name: 'My Assistant', icon: ICONS.assistant }],
+        Agent: [ { id: 'dashboard', name: 'Dashboard', icon: ICONS.dashboard }, { id: 'leads', name: 'Leads', icon: ICONS.contacts }, { id: 'tasks', name: 'My Tasks', icon: ICONS.tasks }, { id: 'deals', name: 'My Deals', icon: ICONS.deals }, { id: 'properties', name: 'Properties', icon: ICONS.properties }, { type: 'divider' }, { id: 'my-assistant', name: 'My Assistant', icon: ICONS.assistant }],
+        Admin: [ { id: 'dashboard', name: 'Dashboard', icon: ICONS.dashboard }, { id: 'leads', name: 'Manage Leads', icon: ICONS.contacts }, { id: 'imports', name: 'Imports', icon: ICONS.imports }, { id: 'properties', name: 'Manage Properties', icon: ICONS.properties }, { id: 'settings', name: 'Settings', icon: ICONS.settings }]
     };
 
     function renderSidebar() {
@@ -205,7 +205,7 @@ document.addEventListener('DOMContentLoaded', () => {
             targetPage.classList.remove('page-hidden');
             state.currentPage = pageId;
             
-            const renderMap = { 'dashboard': renderDashboard, 'my-assistant': renderMyAssistantPage, 'my-assistant-settings': renderMyAssistantSettingsPage, 'deals': renderDealsPage, 'deal-details': () => renderDealDetailsPage(contextId), 'contacts': renderContactsPage, 'properties': renderPropertiesPage, 'property-details': () => renderPropertyDetailsPage(contextId), 'tasks': renderTasksPage, 'analytics': renderAnalyticsPage, 'settings': renderSettingsPage, 'imports': renderImportsPage };
+            const renderMap = { 'dashboard': renderDashboard, 'my-assistant': renderMyAssistantPage, 'my-assistant-settings': renderMyAssistantSettingsPage, 'deals': renderDealsPage, 'deal-details': () => renderDealDetailsPage(contextId), 'leads': renderLeadsPage, 'properties': renderPropertiesPage, 'property-details': () => renderPropertyDetailsPage(contextId), 'tasks': renderTasksPage, 'analytics': renderAnalyticsPage, 'settings': renderSettingsPage, 'imports': renderImportsPage };
             if (renderMap[pageId]) renderMap[pageId]();
 
             const pageConfig = (navLinks[state.currentUserRole] || []).find(p => p.id === pageId);
@@ -1440,9 +1440,9 @@ function clearChatHistory() {
         }
     });
 
-    // Функция рендеринга страницы контактов
-    function renderContactsPage() {
-        const page = document.getElementById('page-contacts');
+    // Функция рендеринга страницы лидов
+    function renderLeadsPage() {
+        const page = document.getElementById('page-leads');
         page.innerHTML = `
             <div class="space-y-6">
                 <!-- Верхняя панель управления -->
@@ -1461,7 +1461,7 @@ function clearChatHistory() {
                     <div class="p-6 border-b border-gray-200">
                         <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
                             <div class="flex flex-col sm:flex-row sm:items-center gap-4">
-                                <h3 class="font-semibold text-lg text-gray-900">Контакты</h3>
+                                <h3 class="font-semibold text-lg text-gray-900">Лиды</h3>
                                 <!-- Табы фильтрации -->
                                 <div id="contacts-filter-tabs" class="flex flex-wrap gap-2">
                                 </div>
@@ -1664,14 +1664,14 @@ function clearChatHistory() {
             </div>
         `;
         
-        // Инициализация функционала страницы контактов
-        initializeContactsPage();
+        // Инициализация функционала страницы лидов
+        initializeLeadsPage();
     }
 
-    // Инициализация функционала страницы контактов
-    function initializeContactsPage() {
-        console.log('🚀 Initializing contacts page...');
-        console.log('📊 Initial contactsData check:', window.contactsData);
+    // Инициализация функционала страницы лидов
+    function initializeLeadsPage() {
+        console.log('🚀 Initializing leads page...');
+        console.log('📊 Initial leadsData check:', window.contactsData);
         
         let currentFilter = 'all';
         let currentSort = { field: null, direction: 'asc' };
@@ -2325,27 +2325,27 @@ function clearChatHistory() {
 <script src="components/contact-view-modal.js"></script>
 
 <script>
-// Инициализация компонентов контактов
+// Инициализация компонентов лидов
 document.addEventListener('DOMContentLoaded', () => {
-    // Инициализируем верхнюю панель контактов при загрузке страницы контактов
-    if (window.location.hash === '#contacts' || window.location.hash === '') {
-        initializeContactsComponents();
+    // Инициализируем верхнюю панель лидов при загрузке страницы лидов
+    if (window.location.hash === '#leads' || window.location.hash === '') {
+        initializeLeadsComponents();
     }
-    
-    // Инициализируем при переходе на страницу контактов
+
+    // Инициализируем при переходе на страницу лидов
     window.addEventListener('hashchange', () => {
-        if (window.location.hash === '#contacts') {
+        if (window.location.hash === '#leads') {
             setTimeout(() => {
-                initializeContactsComponents();
+                initializeLeadsComponents();
             }, 100);
         }
     });
 });
 
-function initializeContactsComponents() {
-    // Проверяем, что мы на странице контактов и компоненты загружены
+function initializeLeadsComponents() {
+    // Проверяем, что мы на странице лидов и компоненты загружены
     if (document.getElementById('contacts-header-panel') && window.ContactsHeaderPanel) {
-        // Инициализируем верхнюю панель контактов
+        // Инициализируем верхнюю панель лидов
         window.contactsHeaderPanel = new ContactsHeaderPanel();
     }
     

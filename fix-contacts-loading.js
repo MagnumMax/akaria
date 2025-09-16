@@ -16,8 +16,8 @@
     // Функция инициализации контактов
     function initializeContacts() {
         // Проверяем, что мы на странице контактов
-        if (window.location.hash === '#contacts') {
-            console.log('📋 Инициализация компонентов контактов...');
+        if (window.location.hash === '#leads') {
+            console.log('📋 Инициализация компонентов лидов...');
 
             // Ждем полной загрузки DOM
             setTimeout(() => {
@@ -50,7 +50,7 @@
 
     // Обработчик изменения хэша
     window.addEventListener('hashchange', () => {
-        if (window.location.hash === '#contacts') {
+        if (window.location.hash === '#leads') {
             setTimeout(() => {
                 initializeContactComponents();
             }, 300);
