@@ -48,10 +48,10 @@ window.addEventListener('load', function() {
     }, 1000);
 });
 
-// Авоматическая проверка при переходе на страницу контактов
+// Автоматическая проверка при переходе на страницу лидов
 window.addEventListener('hashchange', function() {
-    if (window.location.hash === '#contacts') {
-        console.log('\n=== Переход на страницу контактов ===');
+    if (window.location.hash === '#leads') {
+        console.log('\n=== Переход на страницу лидов ===');
         setTimeout(() => {
             console.log('17. Данные после перехода:', window.contactsData ? window.contactsData.length : 'Нет данных');
             console.log('18. Элементы таблицы после перехода:', {
