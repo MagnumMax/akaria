@@ -6,22 +6,24 @@
 class Badge {
     constructor() {
         this.variants = {
-            default: 'border-transparent bg-gray-900 text-gray-50 hover:bg-gray-900/80',
-            secondary: 'border-transparent bg-gray-100 text-gray-900 hover:bg-gray-100/80',
-            destructive: 'border-transparent bg-red-500 text-gray-50 hover:bg-red-500/80',
-            outline: 'text-gray-950 border-gray-200 bg-white hover:bg-gray-100',
-            success: 'border-transparent bg-green-500 text-gray-50 hover:bg-green-500/80',
-            warning: 'border-transparent bg-yellow-500 text-gray-50 hover:bg-yellow-500/80',
-            info: 'border-transparent bg-blue-500 text-gray-50 hover:bg-blue-500/80'
+            default: '',
+            primary: 'ds-badge-primary',
+            secondary: 'ds-badge-secondary',
+            destructive: 'ds-badge-danger',
+            outline: 'ds-badge-outline',
+            success: 'ds-badge-success',
+            warning: 'ds-badge-warning',
+            info: 'ds-badge-accent',
+            accent: 'ds-badge-accent'
         };
 
         this.sizes = {
-            sm: 'text-xs px-2 py-0.5',
-            default: 'text-xs px-2.5 py-0.5',
-            lg: 'text-sm px-3 py-1'
+            sm: 'ds-badge-sm',
+            default: '',
+            lg: 'ds-badge-lg'
         };
 
-        this.baseClasses = 'inline-flex items-center rounded-full border font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-gray-950 focus:ring-offset-2';
+        this.baseClasses = 'ds-badge';
     }
 
     create(options = {}) {
@@ -142,7 +144,7 @@ class Badge {
         // Добавляем кнопку закрытия
         const closeButton = document.createElement('button');
         closeButton.innerHTML = '×';
-        closeButton.className = 'ml-1 hover:bg-black/10 rounded-full w-4 h-4 flex items-center justify-center text-xs';
+        closeButton.className = 'ml-1 ds-badge-close';
         closeButton.setAttribute('aria-label', 'Удалить');
 
         if (onDismiss) {

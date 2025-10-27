@@ -5,8 +5,8 @@
   "main": "index.html",
   "scripts": {
     "dev": "npx serve . -p 3000",
-    "lint": "eslint . --ext .js,.ts --fix",
-    "lint:check": "eslint . --ext .js,.ts",
+    "lint": "eslint \"**/*.js\" --fix --ignore-pattern public --ignore-pattern node_modules --ignore-pattern eslint.config.js",
+    "lint:check": "eslint \"**/*.js\" --ignore-pattern public --ignore-pattern node_modules --ignore-pattern eslint.config.js",
     "type-check": "tsc --noEmit",
     "vercel-build": "rm -rf public/* && cp index.html styles.css *.js public/ && cp -r data/ components/ public/ && echo 'Build completed successfully'",
     "build": "rm -rf public/* && cp index.html styles.css *.js public/ && cp -r data/ components/ public/ && echo 'Build completed successfully'"

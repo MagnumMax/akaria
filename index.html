@@ -8,6 +8,9 @@
     <!-- Tailwind CSS via CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
 
+    <!-- Akaria design system tokens -->
+    <script defer src="design-system/index.js"></script>
+
     <!-- Chart.js via CDN -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
@@ -39,12 +42,12 @@
     </script>
     <script src="fix-contacts-loading.js"></script>
 </head>
-<body class="bg-white">
+<body class="ds-app">
 
     <div id="app-container" class="flex h-screen">
         
         <!-- Sidebar Navigation -->
-        <nav id="sidebar" class="hidden md:flex flex-col w-64 flex-shrink-0 border-r border-border bg-muted/40 transition-transform duration-300">
+        <nav id="sidebar" class="hidden md:flex flex-col w-64 flex-shrink-0 border-r border-border bg-muted/40 transition-transform duration-300 ds-shell-sidebar">
             <div class="flex items-center h-16 px-6 border-b border-border">
                 <a href="#dashboard" class="flex items-center gap-2 font-semibold text-lg">
                     <svg class="h-6 w-6 text-accent" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3L2 9l10 6 10-6-10-6z"/><path d="M2 9l10 6 10-6"/><path d="M2 15l10 6 10-6"/></svg>`,
@@ -56,7 +59,7 @@
 
         <!-- Main Content Area -->
         <div class="flex flex-col flex-1">
-            <header class="flex items-center h-16 px-4 md:px-6 border-b border-border bg-white sticky top-0 z-20">
+            <header class="flex items-center h-16 px-4 md:px-6 border-b border-border bg-white sticky top-0 z-20 ds-shell-header">
                 <button class="md:hidden mr-4 p-2 text-gray-600 hover:text-gray-800" id="mobile-menu-btn">
                     <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <line x1="3" y1="12" x2="21" y2="12"/>
@@ -84,8 +87,8 @@
                 </div>
             </header>
 
-            <main id="main-content" class="flex-1 overflow-y-auto bg-muted/40">
-                <div id="page-content-wrapper" class="p-4 md:p-6">
+            <main id="main-content" class="flex-1 overflow-y-auto bg-muted/40 ds-shell-main">
+                <div id="page-content-wrapper" class="p-4 md:p-6 ds-page-surface">
                     <section id="page-dashboard" class="page-hidden"></section>
 
                     <section id="page-deals" class="page-hidden"></section>
@@ -105,7 +108,7 @@
     </div>
     
     <!-- Floating Role Switcher -->
-    <div id="role-switcher" class="fixed bottom-4 right-4 bg-white border border-border shadow-lg rounded-lg p-2 flex flex-col gap-2 z-50">
+    <div id="role-switcher" class="fixed bottom-4 right-4 bg-white border border-border shadow-lg rounded-lg p-2 flex flex-col gap-2 z-50 ds-role-switcher">
         <button class="role-btn text-xs px-3 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500" data-role="CEO">CEO</button>
         <button class="role-btn text-xs px-3 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500" data-role="Agent">Agent</button>
         <button class="role-btn text-xs px-3 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500" data-role="Admin">Admin</button>

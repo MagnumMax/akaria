@@ -5,7 +5,7 @@
 
 class Input {
     constructor() {
-        this.baseClasses = 'flex h-10 w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:cursor-not-allowed disabled:opacity-50';
+        this.baseClasses = 'ds-input';
     }
 
     create(options = {}) {
@@ -53,12 +53,12 @@ class Input {
         const input = this.create({
             ...inputOptions,
             placeholder,
-            className: `pl-10 ${className}`,
+            className: `ds-input-with-icon ${className}`.trim(),
             onInput: onSearch
         });
 
         const icon = document.createElement('div');
-        icon.className = 'absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400';
+        icon.className = 'ds-input-icon';
         icon.innerHTML = `
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>

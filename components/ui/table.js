@@ -5,7 +5,7 @@
 
 class Table {
     constructor() {
-        this.baseClasses = 'w-full caption-bottom text-sm';
+        this.baseClasses = 'ds-table';
     }
 
     create(options = {}) {
@@ -39,7 +39,7 @@ class Table {
         } = options;
 
         const thead = document.createElement('thead');
-        thead.className = `[&_tr]:border-b ${className}`.trim();
+        thead.className = `ds-table-header ${className}`.trim();
 
         if (typeof children === 'string') {
             thead.innerHTML = children;
@@ -63,7 +63,7 @@ class Table {
         } = options;
 
         const tbody = document.createElement('tbody');
-        tbody.className = `[&_tr:last-child]:border-0 ${className}`.trim();
+        tbody.className = `ds-table-body ${className}`.trim();
 
         if (typeof children === 'string') {
             tbody.innerHTML = children;
@@ -88,9 +88,9 @@ class Table {
             hover = true
         } = options;
 
-        const hoverClass = hover ? 'hover:bg-gray-50' : '';
         const tr = document.createElement('tr');
-        tr.className = `border-b transition-colors ${hoverClass} data-[state=selected]:bg-gray-50 ${className}`.trim();
+        const hoverClass = hover ? 'is-hoverable' : '';
+        tr.className = `ds-table-row ${hoverClass} ${className}`.trim();
 
         if (typeof children === 'string') {
             tr.innerHTML = children;
@@ -120,9 +120,9 @@ class Table {
             onSort = null
         } = options;
 
-        const sortableClass = sortable ? 'cursor-pointer select-none' : '';
+        const sortableClass = sortable ? 'is-sortable' : '';
         const th = document.createElement('th');
-        th.className = `h-12 px-4 text-left align-middle font-medium text-gray-500 ${sortableClass} ${className}`.trim();
+        th.className = `ds-table-head ${sortableClass} ${className}`.trim();
 
         if (typeof children === 'string') {
             th.innerHTML = children;
@@ -144,7 +144,7 @@ class Table {
         } = options;
 
         const td = document.createElement('td');
-        td.className = `p-4 align-middle ${className}`.trim();
+        td.className = `ds-table-cell ${className}`.trim();
 
         if (typeof children === 'string') {
             td.innerHTML = children;
@@ -171,7 +171,7 @@ class Table {
         } = options;
 
         const container = document.createElement('div');
-        container.className = `relative w-full overflow-auto ${className}`.trim();
+        container.className = `ds-table-container ${className}`.trim();
 
         if (children instanceof HTMLElement) {
             container.appendChild(children);

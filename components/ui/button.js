@@ -6,16 +6,19 @@
 class Button {
     constructor() {
         this.variants = {
-            default: 'bg-slate-900 text-slate-50 hover:bg-slate-900/90 focus:ring-slate-900',
-            outline: 'border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 focus:ring-blue-500',
-            ghost: 'text-gray-700 hover:bg-gray-100 focus:ring-blue-500',
-            destructive: 'bg-red-600 text-white hover:bg-red-700 focus:ring-red-500'
+            default: 'ds-button-primary',
+            primary: 'ds-button-primary',
+            outline: 'ds-button-outline',
+            ghost: 'ds-button-ghost',
+            destructive: 'ds-button-destructive',
+            subtle: 'ds-button-subtle'
         };
 
         this.sizes = {
-            sm: 'px-3 py-1.5 text-sm',
-            default: 'px-4 py-2 text-sm',
-            lg: 'px-6 py-3 text-base'
+            sm: 'ds-button-sm',
+            default: 'ds-button-md',
+            md: 'ds-button-md',
+            lg: 'ds-button-lg'
         };
     }
 
@@ -31,7 +34,7 @@ class Button {
             id = ''
         } = options;
 
-        const baseClasses = 'inline-flex items-center justify-center rounded-lg font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none';
+        const baseClasses = 'ds-button';
         const variantClasses = this.variants[variant] || this.variants.default;
         const sizeClasses = this.sizes[size] || this.sizes.default;
 

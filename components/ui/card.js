@@ -5,7 +5,7 @@
 
 class Card {
     constructor() {
-        this.baseClasses = 'rounded-lg border border-gray-200 bg-white shadow-sm';
+        this.baseClasses = 'ds-card';
     }
 
     create(options = {}) {
@@ -47,7 +47,7 @@ class Card {
         } = options;
 
         const header = document.createElement('div');
-        header.className = `flex flex-col space-y-1.5 p-6 ${className}`.trim();
+        header.className = `ds-card-header ${className}`.trim();
 
         if (typeof children === 'string') {
             header.innerHTML = children;
@@ -66,7 +66,7 @@ class Card {
         } = options;
 
         const title = document.createElement(`h${level}`);
-        title.className = `text-lg font-semibold leading-none tracking-tight ${className}`.trim();
+        title.className = `ds-card-title ${className}`.trim();
         title.textContent = children;
 
         return title;
@@ -79,7 +79,7 @@ class Card {
         } = options;
 
         const description = document.createElement('p');
-        description.className = `text-sm text-gray-600 ${className}`.trim();
+        description.className = `text-sm text-muted-foreground ${className}`.trim();
         description.textContent = children;
 
         return description;
@@ -92,7 +92,7 @@ class Card {
         } = options;
 
         const content = document.createElement('div');
-        content.className = `p-6 pt-0 ${className}`.trim();
+        content.className = `ds-card-content ${className}`.trim();
 
         if (typeof children === 'string') {
             content.innerHTML = children;
@@ -118,7 +118,7 @@ class Card {
         } = options;
 
         const footer = document.createElement('div');
-        footer.className = `flex items-center p-6 pt-0 ${className}`.trim();
+        footer.className = `ds-card-footer ${className}`.trim();
 
         if (typeof children === 'string') {
             footer.innerHTML = children;
