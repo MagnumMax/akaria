@@ -1,6 +1,6 @@
 /**
  * Input Component - shadcn/ui style
- * Компонент поля ввода в стиле shadcn/ui
+ * Input Component - shadcn/ui style
  */
 
 class Input {
@@ -38,10 +38,10 @@ class Input {
         return input;
     }
 
-    // Создание поля поиска с иконкой
+    // Create search input with icon
     createSearch(options = {}) {
         const {
-            placeholder = 'Поиск...',
+            placeholder = 'Search...',
             className = '',
             onSearch = null,
             ...inputOptions
@@ -71,7 +71,7 @@ class Input {
         return container;
     }
 
-    // Статические методы для быстрого создания
+    // Static methods for quick creation
     static create(options) {
         return new Input().create(options);
     }
@@ -81,7 +81,7 @@ class Input {
     }
 }
 
-// Экспорт для использования
+// Export for use
 if (typeof module !== 'undefined' && module.exports) {
     module.exports = Input;
 } else {

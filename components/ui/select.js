@@ -1,4 +1,4 @@
-// Select компонент в стиле shadcn/ui
+// Select component - shadcn/ui style
 class Select {
     static create(options = {}) {
         const {
@@ -16,7 +16,7 @@ class Select {
         select.disabled = disabled;
         select.value = defaultValue;
 
-        // Базовые стили
+        // Base styles
         const baseClasses = [
             'flex',
             'h-10',
@@ -41,14 +41,14 @@ class Select {
             'cursor-pointer'
         ];
 
-        // Стили для размеров
+        // Size styles
         const sizeClasses = {
             sm: ['h-9', 'px-2', 'text-xs'],
             default: ['h-10', 'px-3', 'text-sm'],
             lg: ['h-11', 'px-4', 'text-base']
         };
 
-        // Стили для вариантов
+        // Variant styles
         const variantClasses = {
             default: ['border-gray-300', 'focus:ring-blue-500', 'focus:border-transparent'],
             destructive: ['border-red-300', 'focus:ring-red-500', 'focus:border-transparent'],
@@ -56,7 +56,7 @@ class Select {
             ghost: ['border-transparent', 'bg-transparent', 'focus:ring-blue-500']
         };
 
-        // Применяем классы
+        // Apply classes
         const allClasses = [
             ...baseClasses,
             ...(sizeClasses[size] || sizeClasses.default),
@@ -69,7 +69,7 @@ class Select {
 
         select.className = allClasses.join(' ');
 
-        // Добавляем placeholder если нет defaultValue
+        // Add placeholder if no defaultValue
         if (!defaultValue && placeholder) {
             const placeholderOption = document.createElement('option');
             placeholderOption.value = '';
@@ -79,7 +79,7 @@ class Select {
             select.appendChild(placeholderOption);
         }
 
-        // Добавляем опции
+        // Add options
         selectOptions.forEach(option => {
             const optionElement = document.createElement('option');
             optionElement.value = option.value;
@@ -96,7 +96,7 @@ class Select {
             select.appendChild(optionElement);
         });
 
-        // Добавляем обработчик изменений
+        // Add change handler
         if (onChange) {
             select.addEventListener('change', onChange);
         }
@@ -104,7 +104,7 @@ class Select {
         return select;
     }
 
-    // Создание кастомного select с выпадающим списком
+    // Create custom select with dropdown
     static createCustom(options = {}) {
         const {
             options: selectOptions = [],
@@ -125,7 +125,7 @@ class Select {
         trigger.type = 'button';
         trigger.disabled = disabled;
 
-        // Базовые стили для триггера
+        // Base styles for trigger
         const baseClasses = [
             'flex',
             'h-10',
@@ -149,14 +149,14 @@ class Select {
             'disabled:opacity-50'
         ];
 
-        // Стили для размеров
+        // Size styles
         const sizeClasses = {
             sm: ['h-9', 'px-2', 'text-xs'],
             default: ['h-10', 'px-3', 'text-sm'],
             lg: ['h-11', 'px-4', 'text-base']
         };
 
-        // Стили для вариантов
+        // Variant styles
         const variantClasses = {
             default: ['border-gray-300', 'focus:ring-blue-500', 'focus:border-transparent'],
             destructive: ['border-red-300', 'focus:ring-red-500', 'focus:border-transparent'],
@@ -164,7 +164,7 @@ class Select {
             ghost: ['border-transparent', 'bg-transparent', 'focus:ring-blue-500']
         };
 
-        // Применяем классы к триггеру
+        // Apply classes to trigger
         const allClasses = [
             ...baseClasses,
             ...(sizeClasses[size] || sizeClasses.default),
@@ -177,13 +177,13 @@ class Select {
 
         trigger.className = allClasses.join(' ');
 
-        // Текст триггера
+        // Trigger text
         const triggerText = document.createElement('span');
         const selectedOption = selectOptions.find(opt => opt.value === defaultValue);
         triggerText.textContent = selectedOption ? selectedOption.label : placeholder;
         triggerText.className = selectedOption ? '' : 'text-gray-500';
 
-        // Иконка стрелки
+        // Arrow icon
         const arrow = document.createElement('span');
         arrow.innerHTML = '▼';
         arrow.className = 'ml-2 h-4 w-4 opacity-50 transition-transform';
@@ -191,29 +191,34 @@ class Select {
         trigger.appendChild(triggerText);
         trigger.appendChild(arrow);
 
-        // Выпадающий список
+        // Dropdown list
         const dropdown = document.createElement('div');
         dropdown.className = 'absolute z-50 min-w-[8rem] overflow-hidden rounded-md border bg-white p-1 text-gray-950 shadow-md hidden top-full mt-1 w-full';
 
-        // Поле поиска (если включено)
+        // Search field (if enabled)
         if (searchable) {
             const searchInput = document.createElement('input');
             searchInput.type = 'text';
-            searchInput.placeholder = 'Поиск...';
+            searchInput.placeholder = 'Search...';
             searchInput.className = 'w-full px-2 py-1 text-sm border-b border-gray-200 focus:outline-none focus:border-blue-500 mb-1';
             dropdown.appendChild(searchInput);
 
             searchInput.addEventListener('input', (e) => {
-                const query = e.target.value.toLowerCase();
-                const items = dropdown.querySelectorAll('[data-option]');
-                items.forEach(item => {
-                    const text = item.textContent.toLowerCase();
-                    item.style.display = text.includes(query) ? 'block' : 'none';
-                });
+                const target = e.target;
+                if (target instanceof HTMLInputElement) {
+                    const query = target.value.toLowerCase();
+                    const items = dropdown.querySelectorAll('[data-option]');
+                    items.forEach(item => {
+                        if (item instanceof HTMLElement) {
+                            const text = item.textContent ? item.textContent.toLowerCase() : '';
+                            item.style.display = text.includes(query) ? 'block' : 'none';
+                        }
+                    });
+                }
             });
         }
 
-        // Опции
+        // Options
         selectOptions.forEach(option => {
             const item = document.createElement('div');
             item.className = 'relative flex cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none hover:bg-gray-100 focus:bg-gray-100 data-[disabled]:pointer-events-none data-[disabled]:opacity-50';
@@ -233,21 +238,21 @@ class Select {
             item.addEventListener('click', () => {
                 if (option.disabled) return;
 
-                // Обновляем текст триггера
+                // Update trigger text
                 triggerText.textContent = option.label;
                 triggerText.className = '';
 
-                // Обновляем выбранное состояние
+                // Update selected state
                 dropdown.querySelectorAll('[data-option]').forEach(opt => {
                     opt.className = opt.className.replace(' bg-gray-100', '');
                 });
                 item.className += ' bg-gray-100';
 
-                // Закрываем dropdown
+                // Close dropdown
                 dropdown.classList.add('hidden');
                 arrow.style.transform = '';
 
-                // Вызываем callback
+                // Trigger callback
                 if (onChange) {
                     onChange({ target: { value: option.value } });
                 }
@@ -256,7 +261,7 @@ class Select {
             dropdown.appendChild(item);
         });
 
-        // Обработчик клика по триггеру
+        // Trigger click handler
         trigger.addEventListener('click', () => {
             if (disabled) return;
 
@@ -270,9 +275,10 @@ class Select {
             }
         });
 
-        // Закрытие при клике вне компонента
+        // Close when clicking outside
         document.addEventListener('click', (e) => {
-            if (!container.contains(e.target)) {
+            const target = e.target;
+            if (target instanceof Node && !container.contains(target)) {
                 dropdown.classList.add('hidden');
                 arrow.style.transform = '';
             }
@@ -281,13 +287,13 @@ class Select {
         container.appendChild(trigger);
         container.appendChild(dropdown);
 
-        // Добавляем метод для получения значения
+        // Add method to get value
         container.getValue = () => {
             const selected = dropdown.querySelector('[data-option].bg-gray-100');
-            return selected ? selected.dataset.value : '';
+            return (selected instanceof HTMLElement) ? selected.dataset.value : '';
         };
 
-        // Добавляем метод для установки значения
+        // Add method to set value
         container.setValue = (value) => {
             const option = selectOptions.find(opt => opt.value === value);
             if (option) {
@@ -308,10 +314,10 @@ class Select {
     }
 }
 
-// Экспорт для использования в других модулях
+// Export for use in other modules
 if (typeof module !== 'undefined' && module.exports) {
     module.exports = Select;
 }
 
-// Глобальная доступность
+// Global availability
 window.Select = Select;

@@ -1,6 +1,6 @@
 /**
  * Button Component - shadcn/ui style
- * Компонент кнопки в стиле shadcn/ui
+ * Button Component - shadcn/ui style
  */
 
 class Button {
@@ -47,13 +47,13 @@ class Button {
         return button;
     }
 
-    // Статический метод для быстрого создания
+    // Static method for quick creation
     static create(options) {
         return new Button().create(options);
     }
 }
 
-// Экспорт для использования
+// Export for use
 if (typeof module !== 'undefined' && module.exports) {
     module.exports = Button;
 } else {

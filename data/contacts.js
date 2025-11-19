@@ -1,4 +1,4 @@
-// Данные контактов
+// Contacts Data
 console.log('📂 Loading contacts data...');
 window.contactsData = [
     {

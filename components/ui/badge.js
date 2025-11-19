@@ -1,6 +1,6 @@
 /**
  * Badge Component - shadcn/ui style
- * Компонент бейджа в стиле shadcn/ui
+ * Badge Component - shadcn/ui style
  */
 
 class Badge {
@@ -51,7 +51,7 @@ class Badge {
             badge.setAttribute('role', 'button');
             badge.setAttribute('tabindex', '0');
 
-            // Добавляем поддержку клавиатуры
+            // Add keyboard support
             badge.addEventListener('keydown', (e) => {
                 if (e.key === 'Enter' || e.key === ' ') {
                     e.preventDefault();
@@ -63,7 +63,7 @@ class Badge {
         return badge;
     }
 
-    // Создание бейджа со статусом
+    // Create badge with status
     createStatus(status, text, options = {}) {
         const statusVariants = {
             'new': 'info',
@@ -83,7 +83,7 @@ class Badge {
         });
     }
 
-    // Создание бейджа с иконкой
+    // Create badge with icon
     createWithIcon(options = {}) {
         const {
             icon = '',
@@ -117,7 +117,7 @@ class Badge {
         return badge;
     }
 
-    // Создание бейджа с возможностью удаления
+    // Create dismissible badge
     createDismissible(options = {}) {
         const {
             onDismiss = null,
@@ -131,7 +131,7 @@ class Badge {
             ...restOptions
         });
 
-        // Добавляем текст
+        // Add text
         if (children) {
             const textSpan = document.createElement('span');
             textSpan.textContent = children;
@@ -139,11 +139,11 @@ class Badge {
             badge.appendChild(textSpan);
         }
 
-        // Добавляем кнопку закрытия
+        // Add close button
         const closeButton = document.createElement('button');
         closeButton.innerHTML = '×';
         closeButton.className = 'ml-1 hover:bg-black/10 rounded-full w-4 h-4 flex items-center justify-center text-xs';
-        closeButton.setAttribute('aria-label', 'Удалить');
+        closeButton.setAttribute('aria-label', 'Remove');
 
         if (onDismiss) {
             closeButton.addEventListener('click', (e) => {
@@ -157,7 +157,7 @@ class Badge {
         return badge;
     }
 
-    // Статические методы для быстрого создания
+    // Static methods for quick creation
     static create(options) {
         return new Badge().create(options);
     }
@@ -175,7 +175,7 @@ class Badge {
     }
 }
 
-// Экспорт для использования
+// Export for use
 if (typeof module !== 'undefined' && module.exports) {
     module.exports = Badge;
 } else {

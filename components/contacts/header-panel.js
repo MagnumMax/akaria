@@ -1,4 +1,4 @@
-// Компонент верхней панели контактов с использованием shadcn/ui
+// Contacts header panel component using shadcn/ui
 class ContactsHeaderPanel {
     constructor() {
         this.initializeComponents();
@@ -15,21 +15,21 @@ class ContactsHeaderPanel {
         const actionsContainer = document.getElementById('contacts-actions');
         if (!actionsContainer) return;
 
-        // Создаем кнопки с использованием обычных button элементов
+        // Create buttons using standard button elements
         const importButton = document.createElement('button');
         importButton.className = 'px-3 py-2 bg-blue-600 text-white rounded-md text-sm font-medium hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500';
-        importButton.textContent = 'Импорт';
+        importButton.textContent = 'Import';
         importButton.id = 'import-contacts-btn';
 
         const messageButton = document.createElement('button');
         messageButton.className = 'px-3 py-2 bg-blue-600 text-white rounded-md text-sm font-medium hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed';
-        messageButton.textContent = 'Сообщение';
+        messageButton.textContent = 'Message';
         messageButton.disabled = true;
         messageButton.id = 'bulk-send-message-btn';
 
         const addButton = document.createElement('button');
         addButton.className = 'px-3 py-2 bg-blue-600 text-white rounded-md text-sm font-medium hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500';
-        addButton.textContent = 'Добавить';
+        addButton.textContent = 'Add';
         addButton.id = 'add-contact-btn';
 
         actionsContainer.appendChild(importButton);
@@ -54,9 +54,8 @@ class ContactsHeaderPanel {
             const badge = Badge.create({
                 variant: option.active ? 'default' : 'secondary',
                 size: 'sm',
-                className: `cursor-pointer transition-colors hover:opacity-80 ${
-                    option.active ? 'bg-blue-500 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                }`,
+                className: `cursor-pointer transition-colors hover:opacity-80 ${option.active ? 'bg-blue-500 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                    }`,
                 children: option.label
             });
 
@@ -71,23 +70,23 @@ class ContactsHeaderPanel {
         const searchContainer = document.getElementById('contacts-search-panel');
         if (!searchContainer) return;
 
-        // Поле поиска
+        // Search field
         const searchInput = Input.create({
             type: 'text',
-            placeholder: 'Поиск контактов...',
+            placeholder: 'Search contacts...',
             className: 'w-full sm:w-64'
         });
         searchInput.id = 'contacts-search';
 
-        // Селект источников
+        // Source select
         const sourceSelect = Select.create({
             options: [
-                { value: 'all', label: 'Все источники' },
-                { value: 'website', label: 'Сайт' },
-                { value: 'referral', label: 'Рекомендация' },
-                { value: 'social', label: 'Соц. сети' },
-                { value: 'advertising', label: 'Реклама' },
-                { value: 'cold-call', label: 'Холодный звонок' }
+                { value: 'all', label: 'All Sources' },
+                { value: 'website', label: 'Website' },
+                { value: 'referral', label: 'Referral' },
+                { value: 'social', label: 'Social Media' },
+                { value: 'advertising', label: 'Advertising' },
+                { value: 'cold-call', label: 'Cold Call' }
             ],
             defaultValue: 'all'
         });
@@ -98,44 +97,57 @@ class ContactsHeaderPanel {
     }
 
     bindEvents() {
-        // Обработчик для табов фильтрации
+        // Filter tabs handler
         document.addEventListener('click', (e) => {
-            if (e.target.classList.contains('contact-filter-tab')) {
-                this.handleFilterTabClick(e.target);
+            const target = e.target;
+            if (target instanceof Element && target.classList.contains('contact-filter-tab')) {
+                this.handleFilterTabClick(target);
             }
         });
 
-        // Обработчик для кнопки импорта
+        // Import button handler
         document.addEventListener('click', (e) => {
-            if (e.target.id === 'import-contacts-btn') {
-                document.getElementById('import-file-input').click();
+            const target = e.target;
+            if (target instanceof Element && target.id === 'import-contacts-btn') {
+                const fileInput = document.getElementById('import-file-input');
+                if (fileInput instanceof HTMLElement) {
+                    fileInput.click();
+                }
             }
         });
 
-        // Обработчик для поиска
+        // Search handler
         const searchInput = document.getElementById('contacts-search');
         if (searchInput) {
             searchInput.addEventListener('input', (e) => {
-                this.handleSearch(e.target.value);
+                const target = e.target;
+                if (target instanceof HTMLInputElement) {
+                    this.handleSearch(target.value);
+                }
             });
         }
 
-        // Обработчик для фильтра источников
+        // Source filter handler
         const sourceFilter = document.getElementById('source-filter');
         if (sourceFilter) {
             sourceFilter.addEventListener('change', (e) => {
-                this.handleSourceFilter(e.target.value);
+                const target = e.target;
+                if (target instanceof HTMLSelectElement) {
+                    this.handleSourceFilter(target.value);
+                }
             });
         }
 
-        // Обработчик для изменения выбора контактов
+        // Contacts selection change handler
         document.addEventListener('contacts-selection-changed', (e) => {
-            this.updateMessageButtonState(e.detail.count);
+            if (e instanceof CustomEvent) {
+                this.updateMessageButtonState(e.detail.count);
+            }
         });
     }
 
     handleFilterTabClick(clickedTab) {
-        // Убираем активное состояние со всех табов
+        // Remove active state from all tabs
         document.querySelectorAll('.contact-filter-tab').forEach(tab => {
             tab.className = tab.className.replace(
                 'bg-blue-500 text-white',
@@ -143,33 +155,33 @@ class ContactsHeaderPanel {
             );
         });
 
-        // Добавляем активное состояние к выбранному табу
+        // Add active state to selected tab
         clickedTab.className = clickedTab.className.replace(
             'bg-gray-100 text-gray-700 hover:bg-gray-200',
             'bg-blue-500 text-white'
         );
 
-        // Вызываем фильтрацию контактов
+        // Trigger contact filtering
         const status = clickedTab.dataset.status;
         this.filterContacts(status);
     }
 
     handleSearch(query) {
-        // Логика поиска контактов
+        // Contact search logic
         if (window.contactsManager) {
             window.contactsManager.searchContacts(query);
         }
     }
 
     handleSourceFilter(source) {
-        // Логика фильтрации по источникам
+        // Source filtering logic
         if (window.contactsManager) {
             window.contactsManager.filterBySource(source);
         }
     }
 
     filterContacts(status) {
-        // Логика фильтрации контактов по статусу
+        // Contact status filtering logic
         if (window.contactsManager) {
             window.contactsManager.filterByStatus(status);
         }
@@ -177,19 +189,19 @@ class ContactsHeaderPanel {
 
     updateMessageButtonState(selectedCount) {
         const messageButton = document.getElementById('bulk-send-message-btn');
-        if (messageButton) {
+        if (messageButton instanceof HTMLButtonElement) {
             messageButton.disabled = selectedCount === 0;
             messageButton.textContent = selectedCount > 0
-                ? `💬 Сообщение (${selectedCount})`
-                : '💬 Сообщение';
+                ? `💬 Message (${selectedCount})`
+                : '💬 Message';
         }
     }
 }
 
-// Экспорт для использования в других модулях
+// Export for use in other modules
 if (typeof module !== 'undefined' && module.exports) {
     module.exports = ContactsHeaderPanel;
 }
 
-// Глобальная доступность
+// Global availability
 window.ContactsHeaderPanel = ContactsHeaderPanel;

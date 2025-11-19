@@ -1,6 +1,6 @@
 /**
  * Table Component - shadcn/ui style
- * Компонент таблицы в стиле shadcn/ui
+ * Table Component - shadcn/ui style
  */
 
 class Table {
@@ -163,7 +163,7 @@ class Table {
         return td;
     }
 
-    // Создание контейнера таблицы с прокруткой
+    // Create scrollable table container
     createContainer(options = {}) {
         const {
             className = '',
@@ -180,7 +180,7 @@ class Table {
         return container;
     }
 
-    // Статические методы для быстрого создания
+    // Static methods for quick creation
     static create(options) {
         return new Table().create(options);
     }
@@ -210,7 +210,7 @@ class Table {
     }
 }
 
-// Экспорт для использования
+// Export for use
 if (typeof module !== 'undefined' && module.exports) {
     module.exports = Table;
 } else {

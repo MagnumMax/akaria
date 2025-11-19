@@ -1,4 +1,4 @@
-// Компонент таблицы контактов с использованием shadcn/ui Table
+// Contacts table component using shadcn/ui Table
 class ContactsTable {
     constructor() {
         this.selectedContacts = new Set();
@@ -15,23 +15,23 @@ class ContactsTable {
         const container = document.getElementById('contacts-desktop');
         if (!container) return;
 
-        // Создаем контейнер таблицы с использованием shadcn/ui
+        // Create table container using shadcn/ui
         const tableContainer = Table.createContainer({
             className: 'rounded-md border'
         });
 
-        // Создаем таблицу
+        // Create table
         const table = new Table().create({
             className: 'w-full caption-bottom text-sm'
         });
 
-        // Создаем заголовок таблицы
+        // Create table header
         const thead = Table.createHeader({
             className: '[&_tr]:border-b',
             children: this.createHeaderRow()
         });
 
-        // Создаем тело таблицы
+        // Create table body
         const tbody = document.createElement('tbody');
         tbody.id = 'contacts-table-body';
         tbody.className = '[&_tr:last-child]:border-0';
@@ -40,7 +40,7 @@ class ContactsTable {
         table.appendChild(tbody);
         tableContainer.appendChild(table);
 
-        // Заменяем содержимое контейнера
+        // Replace container content
         container.innerHTML = '';
         container.appendChild(tableContainer);
     }
@@ -50,40 +50,39 @@ class ContactsTable {
             className: 'border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted'
         });
 
-        // Колонка чекбокса
+        // Checkbox column
         const checkboxCell = Table.createHead({
             className: 'h-12 px-4 text-left align-middle font-medium text-muted-foreground [&:has([role=checkbox])]:pr-0',
             children: this.createSelectAllCheckbox()
         });
         headerRow.appendChild(checkboxCell);
 
-        // Колонка имени (с сортировкой)
+        // Name column (sortable)
         const nameCell = Table.createHead({
             className: 'h-12 px-4 text-left align-middle font-medium text-muted-foreground cursor-pointer hover:bg-muted/50',
             children: `
                 <div class="flex items-center gap-2" data-sort="name">
-                    Имя
+                    Name
                     <span class="sort-indicator text-xs opacity-50">↕</span>
                 </div>
             `
         });
         headerRow.appendChild(nameCell);
 
-        // Остальные колонки
+        // Other columns
         const columns = [
-            { label: 'Телефон', key: 'phone' },
+            { label: 'Phone', key: 'phone' },
             { label: 'Email', key: 'email' },
-            { label: 'Источник', key: 'source' },
-            { label: 'Последний контакт', key: 'lastContact', sortable: true },
+            { label: 'Source', key: 'source' },
+            { label: 'Last Contact', key: 'lastContact', sortable: true },
             { label: 'AI Summary', key: 'aiSummary' },
-            { label: 'Действия', key: 'actions' }
+            { label: 'Actions', key: 'actions' }
         ];
 
         columns.forEach(column => {
             const cell = Table.createHead({
-                className: `h-12 px-4 text-left align-middle font-medium text-muted-foreground ${
-                    column.sortable ? 'cursor-pointer hover:bg-muted/50' : ''
-                }`,
+                className: `h-12 px-4 text-left align-middle font-medium text-muted-foreground ${column.sortable ? 'cursor-pointer hover:bg-muted/50' : ''
+                    }`,
                 children: column.sortable ? `
                     <div class="flex items-center gap-2" data-sort="${column.key}">
                         ${column.label}
@@ -125,21 +124,21 @@ class ContactsTable {
             }
         });
 
-        // Чекбокс
+        // Checkbox
         const checkboxCell = Table.createCell({
             className: 'p-4 align-middle [&:has([role=checkbox])]:pr-0',
             children: this.createContactCheckbox(contact.id)
         });
         row.appendChild(checkboxCell);
 
-        // Имя
+        // Name
         const nameCell = Table.createCell({
             className: 'p-4 align-middle font-medium',
             children: `<div class="font-semibold text-foreground">${contact.name}</div>`
         });
         row.appendChild(nameCell);
 
-        // Телефон
+        // Phone
         const phoneCell = Table.createCell({
             className: 'p-4 align-middle',
             children: `<span class="text-sm text-muted-foreground">${this.formatPhone(contact.phone)}</span>`
@@ -153,14 +152,14 @@ class ContactsTable {
         });
         row.appendChild(emailCell);
 
-        // Источник
+        // Source
         const sourceCell = Table.createCell({
             className: 'p-4 align-middle',
             children: this.createSourceBadge(contact.source)
         });
         row.appendChild(sourceCell);
 
-        // Последний контакт
+        // Last Contact
         const lastContactCell = Table.createCell({
             className: 'p-4 align-middle',
             children: `<span class="text-sm text-muted-foreground">${this.formatDate(contact.lastContact)}</span>`
@@ -176,7 +175,7 @@ class ContactsTable {
         });
         row.appendChild(aiSummaryCell);
 
-        // Действия
+        // Actions
         const actionsCell = Table.createCell({
             className: 'p-4 align-middle',
             children: this.createActionButton(contact.id)
@@ -204,24 +203,30 @@ class ContactsTable {
     }
 
     createActionButton(contactId) {
-        return `<button class="view-contact-btn px-2 py-1 text-sm text-gray-600 hover:text-gray-800 hover:bg-gray-100 rounded" data-contact-id="${contactId}">Просмотр</button>`;
+        return `<button class="view-contact-btn px-2 py-1 text-sm text-gray-600 hover:text-gray-800 hover:bg-gray-100 rounded" data-contact-id="${contactId}">View</button>`;
     }
 
     bindEvents() {
-        // Обработчик сортировки
+        // Sort handler
         document.addEventListener('click', (e) => {
-            const sortElement = e.target.closest('[data-sort]');
-            if (sortElement) {
-                this.handleSort(sortElement.dataset.sort);
+            const target = e.target;
+            if (target instanceof Element) {
+                const sortElement = target.closest('[data-sort]');
+                if (sortElement instanceof HTMLElement && sortElement.dataset.sort) {
+                    this.handleSort(sortElement.dataset.sort);
+                }
             }
         });
 
-        // Обработчик выбора всех контактов
+        // Select all handler
         document.addEventListener('change', (e) => {
-            if (e.target.id === 'select-all-contacts') {
-                this.handleSelectAll(e.target.checked);
-            } else if (e.target.classList.contains('contact-checkbox')) {
-                this.handleContactSelect(e.target);
+            const target = e.target;
+            if (target instanceof HTMLInputElement) {
+                if (target.id === 'select-all-contacts') {
+                    this.handleSelectAll(target.checked);
+                } else if (target.classList.contains('contact-checkbox')) {
+                    this.handleContactSelect(target);
+                }
             }
         });
     }
@@ -234,10 +239,10 @@ class ContactsTable {
             this.currentSort.direction = 'asc';
         }
 
-        // Обновляем индикаторы сортировки
+        // Update sort indicators
         this.updateSortIndicators();
 
-        // Вызываем событие сортировки
+        // Dispatch sort event
         document.dispatchEvent(new CustomEvent('contacts-sort-changed', {
             detail: this.currentSort
         }));
@@ -264,13 +269,15 @@ class ContactsTable {
         console.log('📋 Found contact checkboxes:', checkboxes.length);
 
         checkboxes.forEach(checkbox => {
-            checkbox.checked = checked;
-            const contactId = parseInt(checkbox.dataset.contactId);
-            console.log(`✅ Setting contact ${contactId} to ${checked}`);
-            if (checked) {
-                this.selectedContacts.add(contactId);
-            } else {
-                this.selectedContacts.delete(contactId);
+            if (checkbox instanceof HTMLInputElement) {
+                checkbox.checked = checked;
+                const contactId = parseInt(checkbox.dataset.contactId || '0');
+                console.log(`✅ Setting contact ${contactId} to ${checked}`);
+                if (checked) {
+                    this.selectedContacts.add(contactId);
+                } else {
+                    this.selectedContacts.delete(contactId);
+                }
             }
         });
 
@@ -311,7 +318,7 @@ class ContactsTable {
         document.dispatchEvent(event);
     }
 
-    // Вспомогательные методы
+    // Helper methods
     formatPhone(phone) {
         const cleaned = phone.replace(/\D/g, '');
         if (cleaned.length === 11 && cleaned.startsWith('7')) {
@@ -323,14 +330,14 @@ class ContactsTable {
     formatDate(dateString) {
         const date = new Date(dateString);
         const now = new Date();
-        const diffTime = Math.abs(now - date);
+        const diffTime = Math.abs(now.getTime() - date.getTime());
         const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 
-        if (diffDays === 1) return 'Вчера';
-        if (diffDays < 7) return `${diffDays} дн. назад`;
-        if (diffDays < 30) return `${Math.floor(diffDays / 7)} нед. назад`;
+        if (diffDays === 1) return 'Yesterday';
+        if (diffDays < 7) return `${diffDays} days ago`;
+        if (diffDays < 30) return `${Math.floor(diffDays / 7)} weeks ago`;
 
-        return date.toLocaleDateString('ru-RU', {
+        return date.toLocaleDateString('en-US', {
             day: '2-digit',
             month: '2-digit',
             year: 'numeric'
@@ -339,18 +346,18 @@ class ContactsTable {
 
     getSourceLabel(source) {
         const labels = {
-            'website': 'Сайт',
-            'referral': 'Рекомендация',
-            'social': 'Соц. сети',
-            'advertising': 'Реклама',
-            'cold_call': 'Холодный звонок',
-            'import': 'Импорт',
-            'manual': 'Ручной ввод'
+            'website': 'Website',
+            'referral': 'Referral',
+            'social': 'Social Media',
+            'advertising': 'Advertising',
+            'cold_call': 'Cold Call',
+            'import': 'Import',
+            'manual': 'Manual Entry'
         };
         return labels[source] || source;
     }
 
-    // Публичные методы
+    // Public methods
     render(contacts) {
         this.renderContacts(contacts);
     }
@@ -362,14 +369,19 @@ class ContactsTable {
     clearSelection() {
         this.selectedContacts.clear();
         document.querySelectorAll('.contact-checkbox').forEach(checkbox => {
-            checkbox.checked = false;
+            if (checkbox instanceof HTMLInputElement) {
+                checkbox.checked = false;
+            }
         });
-        document.getElementById('select-all-contacts').checked = false;
+        const selectAllCheckbox = document.getElementById('select-all-contacts');
+        if (selectAllCheckbox instanceof HTMLInputElement) {
+            selectAllCheckbox.checked = false;
+        }
         this.updateBulkActions();
     }
 }
 
-// Экспорт для использования
+// Export for use
 if (typeof module !== 'undefined' && module.exports) {
     module.exports = ContactsTable;
 } else {

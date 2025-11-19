@@ -25,14 +25,14 @@ class ContactViewModal {
                     <!-- Header -->
                     <div class="flex items-center justify-between p-6 border-b">
                         <div class="space-y-1">
-                            <h2 class="text-lg font-semibold leading-none tracking-tight">Карточка контакта</h2>
-                            <p class="text-sm text-muted-foreground">Подробная информация о контакте</p>
+                            <h2 class="text-lg font-semibold leading-none tracking-tight">Contact Card</h2>
+                            <p class="text-sm text-muted-foreground">Detailed contact information</p>
                         </div>
                         <button class="rounded-sm opacity-70 hover:opacity-100 p-2 text-gray-600 hover:text-gray-800" id="close-contact-view-modal">
                             <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
                             </svg>
-                            <span class="sr-only">Закрыть</span>
+                            <span class="sr-only">Close</span>
                         </button>
                     </div>
 
@@ -50,17 +50,17 @@ class ContactViewModal {
                                 <svg class="w-4 h-4 mr-2 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
                                 </svg>
-                                Редактировать
+                                Edit
                             </button>
                             <button class="px-3 py-2 border border-red-200 text-red-600 bg-white hover:bg-red-50 rounded-md text-sm font-medium focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500" id="delete-contact-btn">
                                 <svg class="w-4 h-4 mr-2 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
                                 </svg>
-                                Удалить
+                                Delete
                             </button>
                         </div>
                         <button class="px-3 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500" id="close-contact-view-btn">
-                            Закрыть
+                            Close
                         </button>
                     </div>
                 </div>
@@ -162,7 +162,7 @@ class ContactViewModal {
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <!-- Contact Details -->
                     <div class="space-y-4">
-                        <h4 class="font-medium">Контактная информация</h4>
+                        <h4 class="font-medium">Contact Information</h4>
                         <div class="space-y-3">
                             <div class="flex items-center space-x-3">
                                 <div class="flex h-8 w-8 items-center justify-center rounded-md bg-muted">
@@ -172,7 +172,7 @@ class ContactViewModal {
                                 </div>
                                 <div>
                                     <p class="text-sm font-medium">${contact.phone}</p>
-                                    <p class="text-xs text-muted-foreground">Телефон</p>
+                                    <p class="text-xs text-muted-foreground">Phone</p>
                                 </div>
                             </div>
                             <div class="flex items-center space-x-3">
@@ -191,21 +191,21 @@ class ContactViewModal {
 
                     <!-- Additional Info -->
                     <div class="space-y-4">
-                        <h4 class="font-medium">Дополнительная информация</h4>
+                        <h4 class="font-medium">Additional Information</h4>
                         <div class="space-y-3">
                             <div>
-                                <p class="text-xs text-muted-foreground mb-1">Дата создания</p>
+                                <p class="text-xs text-muted-foreground mb-1">Created Date</p>
                                 <p class="text-sm">${this.formatDate(contact.created_at)}</p>
                             </div>
                             ${contact.last_contact ? `
                                 <div>
-                                    <p class="text-xs text-muted-foreground mb-1">Последний контакт</p>
+                                    <p class="text-xs text-muted-foreground mb-1">Last Contact</p>
                                     <p class="text-sm">${this.formatDate(contact.last_contact)}</p>
                                 </div>
                             ` : ''}
                             ${contact.deal_value ? `
                                 <div>
-                                    <p class="text-xs text-muted-foreground mb-1">Сумма сделки</p>
+                                    <p class="text-xs text-muted-foreground mb-1">Deal Value</p>
                                     <p class="text-sm font-medium">${this.formatCurrency(contact.deal_value)}</p>
                                 </div>
                             ` : ''}
@@ -216,7 +216,7 @@ class ContactViewModal {
                 <!-- Notes -->
                 ${contact.notes ? `
                     <div class="space-y-2">
-                        <h4 class="font-medium">Примечания</h4>
+                        <h4 class="font-medium">Notes</h4>
                         <div class="rounded-md border p-3 bg-muted/50">
                             <p class="text-sm">${contact.notes}</p>
                         </div>
@@ -225,7 +225,7 @@ class ContactViewModal {
 
                 <!-- Activity Timeline -->
                 <div class="space-y-4">
-                    <h4 class="font-medium">История активности</h4>
+                    <h4 class="font-medium">Activity History</h4>
                     <div class="space-y-3">
                         <div class="flex items-start space-x-3">
                             <div class="flex h-8 w-8 items-center justify-center rounded-full bg-green-100 text-green-600">
@@ -234,7 +234,7 @@ class ContactViewModal {
                                 </svg>
                             </div>
                             <div class="flex-1">
-                                <p class="text-sm font-medium">Контакт создан</p>
+                                <p class="text-sm font-medium">Contact Created</p>
                                 <p class="text-xs text-muted-foreground">${this.formatDate(contact.created_at)}</p>
                             </div>
                         </div>
@@ -244,19 +244,19 @@ class ContactViewModal {
 
                 <!-- Quick Actions -->
                     <div class="space-y-4">
-                        <h4 class="font-medium">Быстрые действия</h4>
+                        <h4 class="font-medium">Quick Actions</h4>
                         <div class="flex flex-wrap gap-2">
                             <button class="h-9 px-3 border border-gray-300 rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                                📞 Позвонить
+                                📞 Call
                             </button>
                             <button class="h-9 px-3 border border-gray-300 rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                                ✉️ Написать email
+                                ✉️ Email
                             </button>
                             <button class="h-9 px-3 border border-gray-300 rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
                                 💬 WhatsApp
                             </button>
                             <button class="h-9 px-3 border border-gray-300 rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                                📅 Запланировать встречу
+                                📅 Schedule Meeting
                             </button>
                         </div>
                     </div>
@@ -275,11 +275,11 @@ class ContactViewModal {
 
     getStatusBadge(status) {
         const statusConfig = {
-            'new': { label: 'Новый', class: 'bg-blue-100 text-blue-800' },
-            'contacted': { label: 'Связались', class: 'bg-yellow-100 text-yellow-800' },
-            'qualified': { label: 'Квалифицирован', class: 'bg-green-100 text-green-800' },
-            'deal_in_progress': { label: 'Сделка в работе', class: 'bg-purple-100 text-purple-800' },
-            'rejected': { label: 'Отклонен', class: 'bg-red-100 text-red-800' }
+            'new': { label: 'New', class: 'bg-blue-100 text-blue-800' },
+            'contacted': { label: 'Contacted', class: 'bg-yellow-100 text-yellow-800' },
+            'qualified': { label: 'Qualified', class: 'bg-green-100 text-green-800' },
+            'deal_in_progress': { label: 'Deal in Progress', class: 'bg-purple-100 text-purple-800' },
+            'rejected': { label: 'Rejected', class: 'bg-red-100 text-red-800' }
         };
 
         const config = statusConfig[status] || statusConfig['new'];
@@ -288,11 +288,11 @@ class ContactViewModal {
 
     getSourceBadge(source) {
         const sourceConfig = {
-            'website': { label: 'Сайт', class: 'bg-gray-100 text-gray-800' },
-            'referral': { label: 'Рекомендация', class: 'bg-indigo-100 text-indigo-800' },
-            'social': { label: 'Соц. сети', class: 'bg-pink-100 text-pink-800' },
-            'advertising': { label: 'Реклама', class: 'bg-orange-100 text-orange-800' },
-            'cold-call': { label: 'Холодный звонок', class: 'bg-cyan-100 text-cyan-800' }
+            'website': { label: 'Website', class: 'bg-gray-100 text-gray-800' },
+            'referral': { label: 'Referral', class: 'bg-indigo-100 text-indigo-800' },
+            'social': { label: 'Social Media', class: 'bg-pink-100 text-pink-800' },
+            'advertising': { label: 'Advertising', class: 'bg-orange-100 text-orange-800' },
+            'cold-call': { label: 'Cold Call', class: 'bg-cyan-100 text-cyan-800' }
         };
 
         const config = sourceConfig[source] || sourceConfig['website'];
@@ -300,9 +300,9 @@ class ContactViewModal {
     }
 
     formatDate(dateString) {
-        if (!dateString) return 'Не указано';
+        if (!dateString) return 'Not specified';
         const date = new Date(dateString);
-        return date.toLocaleDateString('ru-RU', {
+        return date.toLocaleDateString('en-US', {
             year: 'numeric',
             month: 'long',
             day: 'numeric',
@@ -312,14 +312,14 @@ class ContactViewModal {
     }
 
     formatCurrency(amount) {
-        return new Intl.NumberFormat('ru-RU', {
+        return new Intl.NumberFormat('en-US', {
             style: 'currency',
-            currency: 'RUB'
+            currency: 'USD'
         }).format(amount);
     }
 
     confirmDelete() {
-        if (confirm(`Вы уверены, что хотите удалить контакт "${this.currentContact.name}"?`)) {
+        if (confirm(`Are you sure you want to delete contact "${this.currentContact.name}"?`)) {
             if (this.callbacks.onDelete) {
                 this.callbacks.onDelete(this.currentContact.id);
             }

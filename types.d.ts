@@ -1,95 +1,120 @@
-// Global type definitions for the project
-
-interface Contact {
-  id: number;
-  name: string;
-  email: string;
-  phone: string;
-  company: string;
-  position: string;
-  tags: string[];
-  notes: string;
-  created_at: string;
-  updated_at: string;
-}
-
 interface Deal {
   id: number;
   title: string;
-  value: number;
-  stage: string;
-  contact_id: number;
-  created_at: string;
-  updated_at: string;
+  client: string;
+  agent: string;
+  amount: number;
+  status: string;
+  summary: string;
+  feedback?: {
+    liked: string;
+    disliked: string;
+    rating: number;
+    nextStep: string;
+  };
 }
 
 interface Task {
   id: number;
   title: string;
-  description: string;
-  due_date: string;
-  due: string; // Alternative field name used in data
+  due: string;
   status: string;
   completed: boolean;
-  contact_id: number;
-  created_at: string;
-  updated_at: string;
+  agent?: string;
+  createdBy?: string;
 }
 
 interface Property {
   id: number;
   name: string;
-  address: string;
   location: string;
-  type: string;
   price: number;
-  status: string;
-  created_at: string;
-  updated_at: string;
+  beds: number;
+  baths: number;
+  area: number;
+  agent: string;
+  image: string;
+  type?: string;
 }
 
-interface Assistant {
+interface Interaction {
+  date: string;
+  type: string;
+  message?: string;
+  description?: string;
+}
+
+interface Contact {
   id: number;
   name: string;
-  role: string;
-  avatar: string;
+  phone: string;
+  email: string;
+  source: string;
+  lastContact: string;
+  status: string;
+  company?: string;
+  position?: string;
+  aiSummary?: string;
+  notes?: string;
+  interactions?: Interaction[];
+}
+
+interface AssistantDialog {
+  id: number;
+  title: string;
+  timestamp: string;
+  userQuestion: string;
+  assistantResponse: string;
+  messages: { sender: string; text: string }[];
+}
+
+interface NavLink {
+  id?: string;
+  name?: string;
+  icon?: string;
+  type?: string;
 }
 
 interface Window {
-  contactsData: Contact[];
+  users: {
+    CEO: { name: string; role: string; avatar: string };
+    Agent: { name: string; role: string; avatar: string };
+    Admin: { name: string; role: string; avatar: string };
+  };
+  ICONS: { [key: string]: string };
   dealsData: Deal[];
   tasksData: Task[];
   propertiesData: Property[];
-  assistantsData: Assistant[];
-  iconsData: any;
+  assistantDialogs: AssistantDialog[];
+  ceoAnomaly: any;
+  teamPulseData: any;
+  importedLeads: any[];
+  inactiveUsers: any[];
+  systemErrors: any[];
+  assistantStats: any;
+  contactsData: Contact[];
+  navLinks: { [key: string]: NavLink[] };
+
+  // Components
+  ContactsHeaderPanel: any;
+  contactsHeaderPanel: any;
   ContactsTable: any;
   contactsTable: any;
-  HeaderPanel: any;
-  headerPanel: any;
   ContactsCards: any;
   contactsCards: any;
   AddContactModal: any;
+  addContactModal: any;
   ContactViewModal: any;
-  showContactCard: (contactId: number) => void;
-  showAddContactModal: () => void;
-  closeAddContactModal: () => void;
-  closeContactViewModal: () => void;
-  loadContacts: () => Promise<void>;
-  renderContacts: () => void;
-  initializeComponents: () => void;
-  debugContacts: () => void;
-  state: any;
-}
+  contactViewModal: any;
 
-// Global class declarations
-declare class ContactsTable {
-  constructor();
-  renderContacts(contacts: Contact[]): void;
-}
+  // UI Components
+  Table: any;
+  Badge: any;
+  Button: any;
+  Input: any;
+  Card: any;
+  Select: any;
 
-declare class ContactsCards {
-  constructor();
-  renderContacts(contacts: Contact[]): void;
+  // Managers
+  contactsManager: any;
 }
-
-declare var window: Window & typeof globalThis;

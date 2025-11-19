@@ -25,14 +25,14 @@ class AddContactModal {
                     <!-- Header -->
                     <div class="flex items-center justify-between p-6 border-b">
                         <div class="space-y-1">
-                            <h2 class="text-lg font-semibold leading-none tracking-tight">Добавить контакт</h2>
-                            <p class="text-sm text-muted-foreground">Заполните информацию о новом контакте</p>
+                            <h2 class="text-lg font-semibold leading-none tracking-tight">Add Contact</h2>
+                            <p class="text-sm text-muted-foreground">Fill in the new contact information</p>
                         </div>
                         <button class="rounded-sm opacity-70 hover:opacity-100 p-2 text-gray-600 hover:text-gray-800" id="close-add-contact-modal">
                             <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
                             </svg>
-                            <span class="sr-only">Закрыть</span>
+                            <span class="sr-only">Close</span>
                         </button>
                     </div>
 
@@ -42,22 +42,22 @@ class AddContactModal {
                             <!-- Basic Info -->
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div class="space-y-2">
-                                    <label class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">Имя *</label>
+                                    <label class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">Name *</label>
                                     <input 
                                         type="text" 
                                         name="name" 
                                         required 
                                         class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                                        placeholder="Введите имя"
+                                        placeholder="Enter name"
                                     >
                                 </div>
                                 <div class="space-y-2">
-                                    <label class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">Компания</label>
+                                    <label class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">Company</label>
                                     <input 
                                         type="text" 
                                         name="company" 
                                         class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                                        placeholder="Название компании"
+                                        placeholder="Company name"
                                     >
                                 </div>
                             </div>
@@ -65,7 +65,7 @@ class AddContactModal {
                             <!-- Contact Info -->
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div class="space-y-2">
-                                    <label class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">Телефон *</label>
+                                    <label class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">Phone *</label>
                                     <input 
                                         type="tel" 
                                         name="phone" 
@@ -89,49 +89,49 @@ class AddContactModal {
                             <!-- Additional Info -->
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div class="space-y-2">
-                                    <label class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">Должность</label>
+                                    <label class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">Position</label>
                                     <input 
                                         type="text" 
                                         name="position" 
                                         class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                                        placeholder="Должность"
+                                        placeholder="Position"
                                     >
                                 </div>
                                 <div class="space-y-2">
-                                    <label class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">Источник</label>
+                                    <label class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">Source</label>
                                     <select 
                                         name="source" 
                                         class="flex h-10 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                                     >
-                                        <option value="website">Сайт</option>
-                                        <option value="referral">Рекомендация</option>
-                                        <option value="social">Соц. сети</option>
-                                        <option value="advertising">Реклама</option>
-                                        <option value="cold-call">Холодный звонок</option>
+                                        <option value="website">Website</option>
+                                        <option value="referral">Referral</option>
+                                        <option value="social">Social Media</option>
+                                        <option value="advertising">Advertising</option>
+                                        <option value="cold-call">Cold Call</option>
                                     </select>
                                 </div>
                             </div>
 
                             <!-- Notes -->
                             <div class="space-y-2">
-                                <label class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">Примечания</label>
+                                <label class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">Notes</label>
                                 <textarea 
                                     name="notes" 
                                     rows="3" 
                                     class="flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                                    placeholder="Дополнительная информация о контакте"
+                                    placeholder="Additional contact information"
                                 ></textarea>
                             </div>
 
                             <!-- Import Options -->
                             <div class="rounded-lg border p-4 space-y-3">
-                                <h3 class="font-medium leading-none tracking-tight">Опции импорта</h3>
+                                <h3 class="font-medium leading-none tracking-tight">Import Options</h3>
                                 <div class="flex flex-col sm:flex-row gap-2">
                                     <button class="px-3 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500" id="upload-csv-btn">
-                                        📄 Загрузить CSV/Excel
+                                        📄 Upload CSV/Excel
                                     </button>
                                     <button class="px-3 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500" id="sync-sheets-btn">
-                                        📊 Синхронизация с Google Sheets
+                                        📊 Sync with Google Sheets
                                     </button>
                                 </div>
                             </div>
@@ -141,10 +141,10 @@ class AddContactModal {
                     <!-- Footer -->
                     <div class="flex items-center justify-end gap-2 p-6 border-t">
                         <button class="px-3 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500" id="cancel-add-contact">
-                            Отменить
+                            Cancel
                         </button>
                         <button class="px-3 py-2 bg-blue-600 text-white rounded-md text-sm font-medium hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2" type="submit" form="add-contact-form">
-                            Сохранить контакт
+                            Save Contact
                         </button>
                     </div>
                 </div>
@@ -206,7 +206,9 @@ class AddContactModal {
             // Focus first input
             setTimeout(() => {
                 const firstInput = modal.querySelector('input[name="name"]');
-                firstInput?.focus();
+                if (firstInput instanceof HTMLElement) {
+                    firstInput.focus();
+                }
             }, 100);
         }
     }
@@ -237,7 +239,7 @@ class AddContactModal {
 
         // Validate required fields
         if (!contactData.name || !contactData.phone || !contactData.email) {
-            this.showError('Пожалуйста, заполните все обязательные поля');
+            this.showError('Please fill in all required fields');
             return;
         }
 
@@ -251,7 +253,7 @@ class AddContactModal {
 
     resetForm() {
         const form = document.getElementById('add-contact-form');
-        if (form) {
+        if (form instanceof HTMLFormElement) {
             form.reset();
         }
     }

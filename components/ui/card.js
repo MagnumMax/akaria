@@ -1,6 +1,6 @@
 /**
  * Card Component - shadcn/ui style
- * Компонент карточки в стиле shadcn/ui
+ * Card Component - shadcn/ui style
  */
 
 class Card {
@@ -137,7 +137,7 @@ class Card {
         return footer;
     }
 
-    // Статические методы для быстрого создания
+    // Static methods for quick creation
     static create(options) {
         return new Card().create(options);
     }
@@ -163,7 +163,7 @@ class Card {
     }
 }
 
-// Экспорт для использования
+// Export for use
 if (typeof module !== 'undefined' && module.exports) {
     module.exports = Card;
 } else {

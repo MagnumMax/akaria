@@ -1,15 +1,15 @@
 // -----------------------------------------------------------------------------
-// ДАННЫЕ ПРИЛОЖЕНИЯ
+// APPLICATION DATA
 // -----------------------------------------------------------------------------
 
-// Пользователи системы
+// System Users
 window.users = {
     CEO: { name: 'Alex Ivanov', role: 'CEO', avatar: 'https://i.pravatar.cc/150?u=ceo' },
     Agent: { name: 'Alex Ivanov', role: 'Agent', avatar: 'https://i.pravatar.cc/150?u=agent' },
     Admin: { name: 'Maria Sidorova', role: 'Admin', avatar: 'https://i.pravatar.cc/150?u=admin' }
 };
 
-// Иконки для интерфейса
+// Interface Icons
 window.ICONS = {
     dashboard: '<svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3L2 9l10 6 10-6-10-6z"/><path d="M2 9l10 6 10-6"/><path d="M2 15l10 6 10-6"/></svg>',
     assistant: '<svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 8V4H8"/><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M2 14h2m16 0h2M15 2v2M9 2v2"/></svg>',
@@ -24,7 +24,7 @@ window.ICONS = {
     chevron: '<svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6,9 12,15 18,9"/></svg>'
 };
 
-// Данные сделок
+// Deals Data
 window.dealsData = [
     { id: 1, title: 'Villa in Palm Jumeirah', client: 'John Doe', agent: 'Alex Ivanov', amount: 5_200_000, status: 'New Lead', summary: 'Client John Doe, budget around $5.2M...', feedback: { liked: 'Sea view', disliked: 'Wants a modern kitchen', rating: 4, nextStep: 'Find properties with modern kitchens and sea views' } },
     { id: 2, title: 'Penthouse Downtown', client: 'Jane Smith', agent: 'Alex Ivanov', amount: 3_800_000, status: 'Qualified', summary: 'Jane Smith looking for luxury penthouse...', offerUrl: '#offer/2' },
@@ -33,16 +33,16 @@ window.dealsData = [
     { id: 5, title: 'Luxury Villa JBR', client: 'Elon Musk', agent: 'Alex Ivanov', amount: 8_900_000, status: 'New Lead', summary: 'High-profile client interested in JBR area...', offerUrl: '#offer/5' }
 ];
 
-// Данные задач
+// Tasks Data
 window.tasksData = [
-    { id: 1, title: 'Follow up with John Doe', due: '2024-09-10', status: 'Today', completed: false, agent: 'Alex Ivanov', createdBy: 'Jessica'},
+    { id: 1, title: 'Follow up with John Doe', due: '2024-09-10', status: 'Today', completed: false, agent: 'Alex Ivanov', createdBy: 'Jessica' },
     { id: 2, title: 'Prepare offer for Jane Smith', due: '2024-09-11', status: 'Upcoming', completed: false, agent: 'Alex Ivanov' },
     { id: 3, title: 'Schedule property viewing', due: '2024-09-09', status: 'Overdue', completed: false, agent: 'Alex Ivanov' },
     { id: 4, title: 'Update CRM with client feedback', due: '2024-09-10', status: 'Today', completed: true, agent: 'Alex Ivanov' },
     { id: 5, title: 'Review contract terms', due: '2024-09-12', status: 'Upcoming', completed: false, agent: 'Alex Ivanov' }
 ];
 
-// Данные недвижимости
+// Properties Data
 window.propertiesData = [
     { id: 1, name: 'Luxury Villa with Sea View', location: 'Palm Jumeirah', price: 5_200_000, beds: 5, baths: 6, area: 6500, agent: 'Alex Ivanov', image: 'https://picsum.photos/seed/p1/800/600' },
     { id: 2, name: 'Modern Apartment, Marina View', location: 'Dubai Marina', price: 3_800_000, beds: 3, baths: 4, area: 2200, agent: 'Alex Ivanov', image: 'https://picsum.photos/seed/p2/800/600' },
@@ -51,7 +51,7 @@ window.propertiesData = [
     { id: 5, name: 'Commercial Office Space', location: 'Business Bay', price: 4_500_000, beds: 0, baths: 2, area: 3000, agent: 'Alex Ivanov', image: 'https://picsum.photos/seed/p5/800/600' }
 ];
 
-// Диалоги с ассистентами
+// Assistant Dialogs
 window.assistantDialogs = [
     { id: 1, client: 'Mark Zuckerberg', lastMessage: 'Thanks, Jessica! Looks interesting...', status: 'Waiting for Client' },
     { id: 2, client: 'Elon Musk', lastMessage: 'Planning to send: "Based on your interest..."', status: 'Approval Needed' },
@@ -59,7 +59,7 @@ window.assistantDialogs = [
     { id: 4, client: 'Bill Gates', lastMessage: 'Client asked about financing options...', status: 'Waiting for Client' }
 ];
 
-// Аномалия для CEO
+// CEO Anomaly
 window.ceoAnomaly = {
     agent: 'Anna Petrova',
     metric: 'Lead Qualification Rate',
@@ -67,14 +67,14 @@ window.ceoAnomaly = {
     suggestion: 'Review AI prompt settings.'
 };
 
-// Данные команды
+// Team Data
 window.teamPulseData = [
     { agent: 'Alex Ivanov', dialogs: 12, responseTime: '32s', conversion: '68%' },
     { agent: 'Anna Petrova', dialogs: 8, responseTime: '45s', conversion: '53%' },
     { agent: 'David Williams', dialogs: 15, responseTime: '28s', conversion: '71%' }
 ];
 
-// Импортированные лиды
+// Imported Leads
 window.importedLeads = [
     { name: 'Vitalik Buterin', phone: '+971 50 123 4567', status: 'Unassigned' },
     { name: 'Pavel Durov', phone: '+971 50 234 5678', status: 'Unassigned' },
@@ -83,24 +83,24 @@ window.importedLeads = [
     { name: 'Changpeng Zhao', phone: '+971 50 567 8901', status: 'Unassigned' }
 ];
 
-// Неактивные пользователи
+// Inactive Users
 window.inactiveUsers = [
     { name: 'Old Agent', lastSeen: '45 days ago' }
 ];
 
-// Системные ошибки
+// System Errors
 window.systemErrors = [
     { code: 'API-502', message: 'Failed to connect to WhatsApp Gateway', time: '2 hours ago' }
 ];
 
-// Статистика ассистентов
+// Assistant Statistics
 window.assistantStats = [
     { assistant: 'Jessica', owner: 'Alex Ivanov', dialogs: 152, conversion: '68%' },
     { assistant: 'Sarah', owner: 'Anna Petrova', dialogs: 121, conversion: '53%' },
     { assistant: 'David', owner: 'David Williams', dialogs: 189, conversion: '71%' }
 ];
 
-// Данные контактов
+// Contacts Data
 window.contactsData = [
     {
         id: 1,
@@ -239,7 +239,7 @@ window.contactsData = [
     }
 ];
 
-// Навигационные ссылки для разных ролей
+// Navigation links for different roles
 const navLinks = {
     CEO: [
         { id: 'dashboard', name: 'Dashboard', icon: ICONS.dashboard },
