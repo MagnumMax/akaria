@@ -12,6 +12,7 @@ interface Deal {
     rating: number;
     nextStep: string;
   };
+  offerUrl?: string;
 }
 
 interface Task {

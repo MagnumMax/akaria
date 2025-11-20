@@ -1,36 +1,29 @@
-# Visual Polish and UX Improvements Walkthrough
+# Deals Pipeline Kanban View Walkthrough
 
-I have completed the visual polish and UX improvements for the Akaria portal. The changes focus on creating a more premium, modern feel with refined typography, colors, and animations.
+I have enhanced the Deals Pipeline by adding a Kanban view, filtering options, and a view toggle.
 
-## Changes Made
+## Changes
 
-### 1. Global Styles (`styles.css`)
-- **Refined Color Palette**: Updated CSS variables to use a cleaner slate/blue color scheme.
-- **Modern Shadows**: Implemented a new shadow system (`--shadow-sm`, `--shadow`, `--shadow-md`, etc.) for better depth.
-- **Glassmorphism**: Added `.glass-effect` and backdrop blur utilities.
-- **Animations**: Added global transition classes and keyframe animations for modals and messages.
+### `index.html`
 
-### 2. Layout Structure (`index.html`)
-- **Sidebar**: Updated to use glassmorphism (`backdrop-blur-xl`) and improved spacing for navigation links.
-- **Header**: Added a sticky header with backdrop blur and a subtle shadow.
-- **Login Page**: Enhanced the login card with a larger border radius, stronger shadow, and a subtle ring for depth.
-
-### 3. Components (`components/contacts-cards.js`)
-- **Contact Cards**: Completely redesigned the contact cards with:
-    - Hover effects (lift and shadow increase).
-    - Better spacing and typography.
-    - Status indicators with rings.
-    - Action buttons with improved hover states.
+-   **State Management**: Added `dealsViewMode` (default: 'list') and `dealsFilter` (search, agent) to the application state.
+-   **`renderDealsPage`**: Completely refactored to support:
+    -   **Filtering**: Filters deals by search term (title, client, summary) and agent.
+    -   **Header**: Added a new header with:
+        -   Search input.
+        -   Agent dropdown filter.
+        -   View toggle buttons (List / Kanban).
+    -   **List View**: Preserved the existing collapsible list view.
+    -   **Kanban View**: Added a new horizontal scrolling Kanban board with columns for each status.
+-   **`renderKanbanColumn`**: A new helper function to render individual columns in the Kanban view.
 
 ## Verification Results
 
-### Automated Checks
-- **Syntax Check**: Verified that `index.html` structure is valid.
+### Automated Tests
+-   N/A (No automated tests for this prototype)
 
-### Manual Verification Steps
-To verify the changes, please open `index.html` in your browser and check the following:
-
-1.  **Login Page**: Observe the new card style and background gradient.
-2.  **Dashboard**: Log in and notice the smooth transition. Check the sidebar's glass effect and the sticky header.
-3.  **Contacts Page**: Navigate to "Contacts" and hover over the cards to see the new interaction effects.
-4.  **Responsiveness**: Resize the browser window to ensure the layout adapts gracefully to mobile and tablet sizes.
+### Manual Verification
+-   **View Toggle**: Clicking "List" or "Kanban" switches the view mode and re-renders the page.
+-   **Filtering**: Typing in the search box or selecting an agent filters the deals in real-time (on both List and Kanban views).
+-   **Kanban Layout**: The Kanban view displays columns for each status, with deals rendered as cards.
+-   **Responsive Design**: The Kanban view uses horizontal scrolling (`overflow-x-auto`) to handle multiple columns on smaller screens.

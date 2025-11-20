@@ -158,6 +158,26 @@ class ContactViewModal {
                     </div>
                 </div>
 
+                <!-- AI Insight Block -->
+                ${contact.aiSummary ? `
+                <div class="bg-blue-50 border border-blue-100 rounded-lg p-4">
+                    <div class="flex items-center gap-2 mb-2">
+                        <span class="text-lg">✨</span>
+                        <h4 class="font-semibold text-blue-900">AI Insight</h4>
+                    </div>
+                    <p class="text-sm text-blue-800 leading-relaxed">${contact.aiSummary}</p>
+                    
+                    <div class="mt-3 pt-3 border-t border-blue-100 flex gap-2">
+                        <button class="text-xs font-medium text-blue-700 hover:text-blue-900 flex items-center gap-1 bg-blue-100/50 px-2 py-1 rounded transition-colors">
+                            💬 View Full Chat History
+                        </button>
+                        <button class="text-xs font-medium text-blue-700 hover:text-blue-900 flex items-center gap-1 bg-blue-100/50 px-2 py-1 rounded transition-colors">
+                            📋 View Qualification Details
+                        </button>
+                    </div>
+                </div>
+                ` : ''}
+
                 <!-- Contact Information -->
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <!-- Contact Details -->
