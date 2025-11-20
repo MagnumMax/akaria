@@ -22,8 +22,8 @@ console.log('9. contacts-mobile элемент:', document.getElementById('conta
 
 // Проверка загрузки скриптов
 console.log('\n=== Проверка загрузки скриптов ===');
-console.log('10. ContactsTable класс:', typeof ContactsTable !== 'undefined' ? '✅ Загружен' : '❌ Не загружен');
-console.log('11. ContactsCards класс:', typeof ContactsCards !== 'undefined' ? '✅ Загружен' : '❌ Не загружен');
+console.log('10. ContactsTable класс:', typeof window.ContactsTable !== 'undefined' ? '✅ Загружен' : '❌ Не загружен');
+console.log('11. ContactsCards класс:', typeof window.ContactsCards !== 'undefined' ? '✅ Загружен' : '❌ Не загружен');
 
 // Проверка текущей страницы
 console.log('\n=== Проверка текущего состояния ===');

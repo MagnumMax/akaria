@@ -288,12 +288,14 @@ class Select {
         container.appendChild(dropdown);
 
         // Add method to get value
+        // @ts-ignore
         container.getValue = () => {
             const selected = dropdown.querySelector('[data-option].bg-gray-100');
             return (selected instanceof HTMLElement) ? selected.dataset.value : '';
         };
 
         // Add method to set value
+        // @ts-ignore
         container.setValue = (value) => {
             const option = selectOptions.find(opt => opt.value === value);
             if (option) {

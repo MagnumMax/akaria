@@ -1,4 +1,6 @@
 // Contacts header panel component using shadcn/ui
+const { Badge, Input, Select } = window;
+
 class ContactsHeaderPanel {
     constructor() {
         this.initializeComponents();

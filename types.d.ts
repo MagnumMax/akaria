@@ -62,11 +62,14 @@ interface Contact {
 
 interface AssistantDialog {
   id: number;
-  title: string;
-  timestamp: string;
-  userQuestion: string;
-  assistantResponse: string;
-  messages: { sender: string; text: string }[];
+  title?: string;
+  timestamp?: string;
+  userQuestion?: string;
+  assistantResponse?: string;
+  messages?: { sender: string; text: string }[];
+  client: string;
+  lastMessage?: string;
+  status?: string;
 }
 
 interface NavLink {
@@ -118,4 +121,9 @@ interface Window {
 
   // Managers
   contactsManager: any;
+
+  // Additional properties
+  getConsoleLogs: any;
+  clearConsoleLogs: any;
+  state: any;
 }

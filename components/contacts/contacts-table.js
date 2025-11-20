@@ -1,4 +1,6 @@
 // Contacts table component using shadcn/ui Table
+const { Table, Badge } = window;
+
 class ContactsTable {
     constructor() {
         this.selectedContacts = new Set();
