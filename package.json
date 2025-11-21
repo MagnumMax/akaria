@@ -5,11 +5,11 @@
   "main": "index.html",
   "scripts": {
     "dev": "npx serve . -p 3000",
-    "lint": "eslint . --ext .js,.ts --fix",
-    "lint:check": "eslint . --ext .js,.ts",
+    "lint": "eslint . --fix",
+    "lint:check": "eslint .",
     "type-check": "tsc --noEmit",
-    "vercel-build": "mkdir -p public && rm -rf public/* && cp index.html styles.css *.js public/ && cp -r data/ components/ public/ && echo 'Build completed successfully'",
-    "build": "rm -rf public/* && cp index.html styles.css *.js public/ && cp -r data/ components/ public/ && echo 'Build completed successfully'",
+    "vercel-build": "mkdir -p public && rm -rf public/* && cp index.html styles.css *.js public/ && cp -r data/ components/ scripts/ public/ && echo 'Build completed successfully'",
+    "build": "rm -rf public/* && cp index.html styles.css *.js public/ && cp -r data/ components/ scripts/ public/ && echo 'Build completed successfully'",
     "vercel": "vercel --prod --yes"
   },
   "devDependencies": {

@@ -1,6 +1,17 @@
 export default [
   {
+    files: ["scripts/**/*.js", "scripts/*.js"],
+    languageOptions: {
+      ecmaVersion: 2022,
+      sourceType: "module",
+      globals: {
+        Intl: "readonly"
+      }
+    }
+  },
+  {
     files: ["**/*.js"],
+    ignores: ["scripts/**"],
     languageOptions: {
       ecmaVersion: 2022,
       sourceType: "script",
@@ -40,6 +51,8 @@ export default [
         HeaderPanel: "readonly",
         AddContactModal: "readonly",
         ContactViewModal: "readonly"
+        ,
+        Intl: "readonly"
       }
     },
     rules: {

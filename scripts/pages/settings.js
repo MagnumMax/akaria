@@ -1,0 +1,7 @@
+import { state } from "../state.js";
+
+
+function renderSettingsPage() { const page = document.getElementById('page-settings'); page.innerHTML = `< div > <div class="bg-white border rounded-lg"><div class="p-4 border-b"><h3 class="font-semibold">User Management</h3></div><div class="p-6"><button class="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-9 px-3 font-medium mb-4">Invite User</button><div class="border rounded-lg overflow-hidden"><table class="w-full text-sm text-left"><thead class="text-xs text-gray-700 uppercase bg-gray-50"><tr><th class="px-6 py-3">Name</th><th class="px-6 py-3">Role</th><th class="px-6 py-3">Status</th><th class="px-6 py-3">Action</th></tr></thead><tbody>${Object.values(users).map(user => `<tr class="bg-white border-b hover:bg-muted"><td class="px-6 py-4 font-medium flex items-center gap-3"><img src="${user.avatar}" class="h-8 w-8 rounded-full">${user.name}</td><td class="px-6 py-4">${user.role}</td><td class="px-6 py-4"><span class="bg-green-100 text-green-800 text-xs font-medium mr-2 px-2.5 py-0.5 rounded-full">Active</span></td><td class="px-6 py-4"><a href="#" class="font-medium text-accent hover:underline">Edit</a></td></tr>`).join('')}</tbody></table></div></div></div></div > `; }
+
+
+export {renderSettingsPage};
